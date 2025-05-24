@@ -1,4 +1,4 @@
-class NumberInput extends HTMLElement {
+customElements.define("number-input", class extends HTMLElement {
     _precision = 2;
     _allowNull = false;
     _locale = "en-US";
@@ -17,6 +17,9 @@ class NumberInput extends HTMLElement {
                     overflow: hidden;
                     width: 160px;
                     min-height: 1.5em;
+                }
+                :host(:focus-within) {
+                    border-color: black;
                 }
 
                 button {
@@ -76,7 +79,6 @@ class NumberInput extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        console.log(name, newValue, oldValue);
         if (oldValue === newValue) return;
         switch (name) {
             case "value":
@@ -94,19 +96,19 @@ class NumberInput extends HTMLElement {
                 this[name] = newValue;
                 break;
             case "allownull":
-                this.allowNull = newValue !== "false" || newValue !== null;
+                this.allowNull = newValue !== "false" && newValue !== null;
                 break;
             case "showbuttons":
-                this.showButtons = newValue !== "false" || newValue !== null;
+                this.showButtons = newValue !== "false" && newValue !== null;
                 break;
             case "emptyvalue":
                 this.emptyValue = newValue === "null" ? null : newValue === "undefined" ? undefined : parseFloat(newValue);
                 break;
             case "readonly":
-                this.readOnly = newValue !== "false" || newValue !== null;
+                this.readOnly = newValue !== "false" && newValue !== null;
                 break;
             case "disabled":
-                this.disabled = newValue !== "false" || newValue !== null;
+                this.disabled = newValue !== "false" && newValue !== null;
                 break;
         }
     }
@@ -277,9 +279,7 @@ class NumberInput extends HTMLElement {
     _handleInputEvent() {
         this._value = this._roundNumber(this._parseNumber(this.numberInput.value));
     }
-}
-
-customElements.define("number-input", NumberInput);
+});
 
 function dateTexts(type, locale) {
     const r = [];
@@ -313,7 +313,7 @@ function dateTexts(type, locale) {
     return r;
 }
 
-class DateInput extends HTMLElement {
+customElements.define("date-input", class extends HTMLElement {
     _locale = "en-US";
     _emptyValue = null;
     _showButtons = true;
@@ -331,6 +331,9 @@ class DateInput extends HTMLElement {
                     overflow: hidden;
                     width: 200px;
                     min-height: 1.5em;
+                }
+                :host(:focus-within) {
+                    border-color: black;
                 }
 
                 button {
@@ -388,16 +391,16 @@ class DateInput extends HTMLElement {
                 this[name] = newValue;
                 break;
             case "showbuttons":
-                this.showButtons = newValue !== "false" || newValue !== null;
+                this.showButtons = newValue !== "false" && newValue !== null;
                 break;
             case "emptyvalue":
                 this.emptyValue = newValue === "null" ? null : newValue === "undefined" ? undefined : newValue;
                 break;
             case "readonly":
-                this.readOnly = newValue !== "false" || newValue !== null;
+                this.readOnly = newValue !== "false" && newValue !== null;
                 break;
             case "disabled":
-                this.disabled = newValue !== "false" || newValue !== null;
+                this.disabled = newValue !== "false" && newValue !== null;
                 break;
         }
     }
@@ -865,7 +868,10 @@ class DateInput extends HTMLElement {
                                         case "time-hm":
                                             this.value = data.selectedTime.slice(0, 5);
                                             break;
+                                        default:
+                                            return;
                                     }
+                                    this._handleChangeEvent();
                                 }},
                                 "button>\u2715", { "on:click": () => handleClose()}
                             ],
@@ -885,6 +891,281 @@ class DateInput extends HTMLElement {
             root
         );
     }
-}
+});
 
-customElements.define("date-input", DateInput);
+customElements.define("checkbox-input", class extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-flex;
+                    border: 1px solid #ccc;
+                    overflow: hidden;
+                    width: 1.5em;
+                    height: 1.5em;
+                    position: relative;
+                    top: 0;
+                }
+                :host(:focus-within) {
+                    border-color: black;
+                }
+
+                input {
+                    width: 100%;
+                    border: none;
+                    outline: none;
+                    appearance: none;
+                    opacity: 0;
+                }
+
+                .l-checked-render-true {
+                    position: absolute;
+                    user-select: none;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    transform: scale(1.75);
+                    display: none;
+                    pointer-events: none;
+                    opacity: 1;
+                }
+
+                input:checked + .l-checked-render-true {
+                    display: flex;
+                }
+                input:disabled + .l-checked-render-true {
+                    opacity: 0.5;
+                }
+                input:disabled {
+                    cursor: not-allowed;
+                }
+            </style>
+            <input type="checkbox" id="checkboxInput" part="input">
+            <div class="l-checked-render-true">✔</div>
+        `;
+
+        this.checkboxInput = this.shadowRoot.getElementById("checkboxInput");
+
+        this.checkboxInput.addEventListener("change", this._handleChangeEvent.bind(this));
+    }
+
+    static get observedAttributes() {
+        return ["checked", "readonly", "disabled"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        switch (name) {
+            case "readonly":
+                this.readOnly = newValue !== "false" && newValue !== null;
+                break;
+            case "disabled":
+                this.disabled = newValue !== "false" && newValue !== null;
+                break;
+            case "checked":
+                this.checked = newValue !== "false" && newValue !== null;
+                break;
+        }
+    }
+
+    get value() {
+        return this.checkboxInput.checked;
+    }
+
+    set value(newValue) {
+        this.checkboxInput.checked = !!newValue;
+    }
+
+    get checked() {
+        return this.value;
+    }
+
+    set checked(newValue) {
+        this.value = newValue;
+    }
+
+    get readOnly() {
+        return this.disabled;
+    }
+
+    set readOnly(newValue) {
+        this.disabled = newValue;
+    }
+
+    get disabled() {
+        return this.checkboxInput.disabled;
+    }
+
+    set disabled(newValue) {
+        this.checkboxInput.disabled = newValue;
+    }
+
+    _handleChangeEvent() {
+        this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
+    }
+});
+
+customElements.define("select-simple", class extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-flex;
+                    border: 1px solid #ccc;
+                    min-width: 50px;
+                    height: 1.5em;
+                    position: relative;
+                    top: 0;
+                }
+                :host(:focus-within) {
+                    border-color: black;
+                }
+
+                select {
+                    width: 100%;
+                    border: none;
+                    outline: none;
+                    appearance: none;
+                    padding: 0 1.5em 0 4px;
+                    background: white;
+                }
+
+                .l-icon {
+                    position: absolute;
+                    user-select: none;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    width: 1.25em;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    pointer-events: none;
+                    opacity: 0.75;
+                    background: white;
+                    transform: scale(0.8) rotate(0);
+                    transition: 0.3s transform;
+                }
+
+                select:open + .l-icon {
+                    transform: scale(0.8) rotate(180deg);
+                    transition: 0.3s transform;
+                }
+
+                select:disabled {
+                    cursor: not-allowed;
+                }
+                select:disabled + .l-icon {
+                    opacity: 0.5;
+                }
+            </style>
+            <select id="selectInput" part="select"><slot></slot></select>
+            <div class="l-icon" part="icon">▼</div>
+        `;
+
+        this.selectInput = this.shadowRoot.getElementById("selectInput");
+
+        this.selectInput.addEventListener("change", this._handleChangeEvent.bind(this));
+    }
+
+    static get observedAttributes() {
+        return ["readonly", "disabled", "options", "value"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        switch (name) {
+            case "readonly":
+                this.readOnly = newValue !== "false" && newValue !== null;
+                break;
+            case "disabled":
+                this.disabled = newValue !== "false" && newValue !== null;
+                break;
+            case "options":
+                this.options = JSON.parse(newValue);
+                break;
+            case "value":
+                this.value = newValue;
+                break;
+        }
+    }
+
+    get value() {
+        return this.selectInput.value;
+    }
+
+    set value(newValue) {
+        let selected;
+        let newValueStr = newValue?.toString() || "";
+        const allOptions = Array.from(this.selectInput.childNodes);
+        for (let option of allOptions) {
+            if (newValueStr === option.value) {
+                option.setAttribute("selected", "");
+                selected = option;
+            }
+            else option.removeAttribute("selected");
+        }
+        if (!selected && allOptions.length > 0) {
+            allOptions[0].setAttribute("selected", "");
+            newValueStr = allOptions[0].value; 
+        }
+        this.selectInput.value = newValueStr;
+    }
+
+    get readOnly() {
+        return this.disabled;
+    }
+
+    set readOnly(newValue) {
+        this.disabled = newValue;
+    }
+
+    get disabled() {
+        return this.selectInput.disabled;
+    }
+
+    set disabled(newValue) {
+        this.selectInput.disabled = newValue;
+    }
+
+    get options() {
+        return this._options;
+    }
+
+    set options(newValue) {
+        this._options = newValue;
+        const storedValue = this.value;
+        this.selectInput.innerHTML = "";
+        for (let item of newValue) {
+            if (!item) continue;
+            const option = document.createElement("option");
+            if (Array.isArray(item)) {
+                option.value = item[0]?.toString() ?? "";
+                option.textContent = item[1]?.toString() ?? item[0] ?? "";
+            }
+            else if (typeof item === "object") {
+                option.value = item.value?.toString() ?? "";
+                option.textContent = item.label ?? "";
+            }
+            else {
+                option.value = item?.toString() ?? "";
+                option.textContent = option.value;
+            }
+            this.selectInput.appendChild(option);
+        }
+        this.value = storedValue;
+    }
+
+    _handleChangeEvent(evt) {
+        this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
+    }
+});

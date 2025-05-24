@@ -44,6 +44,7 @@ document.body.appendChild(
         "input", { value: () => "123", "on:input": (evt) => console.log("input-i", evt.target.value), "on:change": (evt) => console.log("change-i", evt.target.value) },
         "textarea", { value: "123", "on:input": (evt) => console.log("input-ta", evt.target.value), "on:change": (evt) => console.log("change-ta", evt.target.value) },
         "number-input", { value: "123", "on:input": (e) => console.log('num input', e.target.value), "on:change": (e) => console.log('num change', e.target.value) },
+        "date-input", { "on:change": (evt) => console.log(evt) },
         intInput(),
         floatInput(),
     ])
@@ -56,7 +57,11 @@ document.body.appendChild(
 <date-input type="datetime-tz" value="2025-03-01T02:00:00.000+0100"></date-input>
 <date-input type="datetime" value="2025-05-01T02:00:00.000+0100"></date-input>
 <date-input type="datetime-tz" value="2025-05-01T02:00:00.000+0100"></date-input>
-<date-input type="time" value="01:02:03"></date-input>
+<date-input type="time" value="01:02:03" onchange="console.log(event.target.value, event)"></date-input>
 <date-input type="time-hm" value="02:04"></date-input>
+<div>
+    <label>a: <checkbox-input onchange="console.log(event.target.value, event)"></checkbox-input></label>
+</div>
+<select-simple options='[[1],[2],[3, "long text #3"]]' value="3" onchange="console.log(event.target.value, event)"></select-simple>
 </body>
 </html>

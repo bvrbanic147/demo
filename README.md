@@ -39,3 +39,10 @@
     - supports date, time (time-hm short HM), datetime and datetime-tz formats
     - datetime displays value within current time zone
     - datetime-tz stores a value with editors time zone (if changed)
+
+- checkbox-input
+
+- select-simple
+    - uses "options" as attribute(stringified JSON array)/prop(array)
+        - array of tuples ([["a", "value a"], ["b", "value b"]])
+        - or array of items ([{ value: "a", label: "value a" }, { value: "b", label: "value b" }])
