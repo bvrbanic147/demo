@@ -15,15 +15,16 @@ customElements.define("number-input", class extends HTMLElement {
                     display: inline-flex;
                     border: 1px solid #ccc;
                     overflow: hidden;
-                    width: 160px;
+                    width: 12em;
                     min-height: 1.5em;
+                    font-size: 1em;
                 }
                 :host(:focus-within) {
                     border-color: black;
                 }
 
                 button {
-                    padding: 0 8px;
+                    padding: 0 0.5em;
                     border: none;
                     background-color: #eee;
                     color: #333;
@@ -32,6 +33,7 @@ customElements.define("number-input", class extends HTMLElement {
                     min-width: 2em;
                     text-align: center;
                     user-select: none;
+                    font-size: 1em;
                 }
 
                 button:hover {
@@ -54,9 +56,10 @@ customElements.define("number-input", class extends HTMLElement {
 
                 input {
                     width: 100%;
-                    padding: 0 8px;
+                    padding: 0 0.5em;
                     border: none;
                     outline: none;
+                    font-size: 1em;
                 }
             </style>
             <button id="decrement" tabindex="-1" part="dec-button">-</button>
@@ -329,15 +332,16 @@ customElements.define("date-input", class extends HTMLElement {
                     display: inline-flex;
                     border: 1px solid #ccc;
                     overflow: hidden;
-                    width: 200px;
+                    width: 15em;
                     min-height: 1.5em;
+                    font-size: 1em;
                 }
                 :host(:focus-within) {
                     border-color: black;
                 }
 
                 button {
-                    padding: 0 8px;
+                    padding: 0 0.5em;
                     border: none;
                     background-color: #eee;
                     color: #333;
@@ -346,6 +350,7 @@ customElements.define("date-input", class extends HTMLElement {
                     min-width: 2em;
                     text-align: center;
                     user-select: none;
+                    font-size: 1em;
                 }
 
                 button:hover {
@@ -359,9 +364,10 @@ customElements.define("date-input", class extends HTMLElement {
 
                 input {
                     width: 100%;
-                    padding: 0 8px;
+                    padding: 0 0.5em;
                     border: none;
                     outline: none;
+                    font-size: 1em;
                 }
             </style>
             <input type="text" id="dateInput" value="" part="input">
@@ -690,6 +696,7 @@ customElements.define("date-input", class extends HTMLElement {
             weekendTable: weekInfo?.weekend?.map(x => x - 1) ?? [5, 6],
             dateTableContainer: null,
             timeTableContainer: null,
+            selectButton: null,
         };
         data.dow = data.weekTable.map(x => data.dowText[x]);
 
@@ -743,7 +750,8 @@ customElements.define("date-input", class extends HTMLElement {
                                 textContent: day,
                                 "on:click": () => {
                                     data.selectedDate = ymd;
-                                    renderDateTable(elem);
+                                    if (this.type === "date" && data.selectButton.style.visibility === "hidden") data.selectButton.click();
+                                    else renderDateTable(elem);
                                 },
                             };
                         })
@@ -850,29 +858,33 @@ customElements.define("date-input", class extends HTMLElement {
                     }, [
                         "div class='date-time-picker'", [
                             "div class='l-select'", [
-                                "button title='Select'>✔", { "on:click": () => {
-                                    handleClose();
-                                    switch (this.type) {
-                                        case "date":
-                                            this.value = data.selectedDate;
-                                            break;
-                                        case "datetime":
-                                            this.value = new Date(data.selectedDate + "T" + data.selectedTime).toISOString();
-                                            break;
-                                        case "datetime-tz":
-                                            this.value = this._returnTimeZone(new Date(data.selectedDate + "T" + data.selectedTime).toISOString(), this.type);
-                                            break;
-                                        case "time":
-                                            this.value = data.selectedTime;
-                                            break;
-                                        case "time-hm":
-                                            this.value = data.selectedTime.slice(0, 5);
-                                            break;
-                                        default:
-                                            return;
+                                "button title='Select'>✔", {
+                                    ":after": (self) => data.selectButton = self,
+                                    style: { visibility: this.type === "date" ? "hidden" : "" },
+                                    "on:click": () => {
+                                        handleClose();
+                                        switch (this.type) {
+                                            case "date":
+                                                this.value = data.selectedDate;
+                                                break;
+                                            case "datetime":
+                                                this.value = new Date(data.selectedDate + "T" + data.selectedTime).toISOString();
+                                                break;
+                                            case "datetime-tz":
+                                                this.value = this._returnTimeZone(new Date(data.selectedDate + "T" + data.selectedTime).toISOString(), this.type);
+                                                break;
+                                            case "time":
+                                                this.value = data.selectedTime;
+                                                break;
+                                            case "time-hm":
+                                                this.value = data.selectedTime.slice(0, 5);
+                                                break;
+                                            default:
+                                                return;
+                                        }
+                                        this._handleChangeEvent();
                                     }
-                                    this._handleChangeEvent();
-                                }},
+                                },
                                 "button>\u2715", { "on:click": () => handleClose()}
                             ],
                             "div class='l-pickers'", [
@@ -906,6 +918,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     width: 1.5em;
                     height: 1.5em;
                     position: relative;
+                    font-size: 0.75em;
                     top: 0;
                 }
                 :host(:focus-within) {
@@ -934,6 +947,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     display: none;
                     pointer-events: none;
                     opacity: 1;
+                    font-size: 1em;
                 }
 
                 input:checked + .l-checked-render-true {
@@ -1020,10 +1034,11 @@ customElements.define("select-simple", class extends HTMLElement {
                 :host {
                     display: inline-flex;
                     border: 1px solid #ccc;
-                    min-width: 50px;
+                    min-width: 5em;
                     height: 1.5em;
                     position: relative;
                     top: 0;
+                    font-size: 1em;
                 }
                 :host(:focus-within) {
                     border-color: black;
@@ -1034,8 +1049,9 @@ customElements.define("select-simple", class extends HTMLElement {
                     border: none;
                     outline: none;
                     appearance: none;
-                    padding: 0 1.5em 0 4px;
+                    padding: 0 1.5em 0 0.5em;
                     background: white;
+                    font-size: 1em;
                 }
 
                 .l-icon {

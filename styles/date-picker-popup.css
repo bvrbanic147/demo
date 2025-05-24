@@ -4,17 +4,19 @@
     color: black;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5em;
     user-select: none;
-    padding: 12px;
+    padding: 0.75em;
     box-shadow: 1px 1px 4px #00000080;
 }
 .date-time-picker button {
     border: 1px solid #ccc;
     cursor: pointer;
+    font-size: 1em;
 }
 .date-time-picker button.l-today {
-    max-width: 28px;
+    max-width: 1.75em;
+    font-size: 1em;
 }
 .date-time-picker button:hover {
     background-color: #ddd;
@@ -24,14 +26,15 @@
     border: none;
     background: #ffffff;
     appearance: none;
-    padding: 0 2px;
+    padding: 0 0.2em;
     outline: none;
     width: 100%;
     text-align: center;
+    font-size: 1em;
 }
 .date-time-picker .l-value-display {
     font-size: 1.25em;
-    margin: 4px 0;
+    margin: 0.25em 0;
     text-align: center;
 }
 .date-time-picker .l-pickers {
@@ -50,7 +53,7 @@
     justify-content: space-between;
 }
 .date-time-picker .l-select button {
-    padding: 4px 8px;
+    padding: 0.25em 0.5em;
 }
 
 .date-picker table {
@@ -59,7 +62,7 @@
     width: 100%;
 }
 .date-picker number-input {
-    width: 110px;
+    width: 8em;
 }
 .date-picker number-input::part(input) {
     text-align: center;
@@ -73,16 +76,17 @@
     flex: 1 1 auto;
 }
 .date-picker button.l-navig {
-    width: 28px;
-    flex: 0 0 27px;
+    width: 1.75em;
+    flex: 0 0 1.75em;
     border: none;
+    font-size: 1em;
 }
 .date-picker .l-navig-wrapper {
     border: 1px solid #ccc;
     display: flex;
 }
 .date-picker table td {
-    padding: 8px 12px;
+    padding: 0.5em 0.75em;
     cursor: pointer;
     position: relative;
     opacity: 0.25;
@@ -96,7 +100,7 @@
 }
 .date-picker table td.l-today:after {
     content: " ";
-    border: 2px solid black;
+    border: 0.1em solid black;
     position: absolute;
     top: 0;
     left: 0;
@@ -117,7 +121,7 @@
     border-collapse: collapse;
 }
 .time-picker table td {
-    padding: 2px 8px;
+    padding: 0.1em 0.5em;
     background-color: #ffffff;
     position: relative;
     color: #404040;
