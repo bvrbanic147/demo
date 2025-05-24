@@ -931,6 +931,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     outline: none;
                     appearance: none;
                     opacity: 0;
+                    transform: scale(2);
                 }
 
                 .l-checked-render-true {
