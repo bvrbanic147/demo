@@ -1,0 +1,148 @@
+
+.date-time-picker {
+    background-color: #ffffff;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    user-select: none;
+    padding: 12px;
+    box-shadow: 1px 1px 4px #00000080;
+}
+.date-time-picker button {
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+.date-time-picker button.l-today {
+    max-width: 28px;
+}
+.date-time-picker button:hover {
+    background-color: #ddd;
+}
+
+.date-time-picker select {
+    border: none;
+    background: #ffffff;
+    appearance: none;
+    padding: 0 2px;
+    outline: none;
+    width: 100%;
+    text-align: center;
+}
+.date-time-picker .l-value-display {
+    font-size: 1.25em;
+    margin: 4px 0;
+    text-align: center;
+}
+.date-time-picker .l-pickers {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+}
+@media only screen and (max-width: 600px) {
+    .date-time-picker .l-pickers {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+.date-time-picker .l-select {
+    display: flex;
+    justify-content: space-between;
+}
+.date-time-picker .l-select button {
+    padding: 4px 8px;
+}
+
+.date-picker table {
+    border-collapse: collapse;
+    text-align: center;
+    width: 100%;
+}
+.date-picker number-input {
+    width: 110px;
+}
+.date-picker number-input::part(input) {
+    text-align: center;
+}
+.date-picker .l-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.date-picker .l-buttons > * {
+    flex: 1 1 auto;
+}
+.date-picker button.l-navig {
+    width: 28px;
+    flex: 0 0 27px;
+    border: none;
+}
+.date-picker .l-navig-wrapper {
+    border: 1px solid #ccc;
+    display: flex;
+}
+.date-picker table td {
+    padding: 8px 12px;
+    cursor: pointer;
+    position: relative;
+    opacity: 0.25;
+}
+.date-picker table td.l-month {
+    background-color: #ffffff;
+    opacity: 1;
+}
+    .date-picker table td.l-weekend {
+    background-color: #e0e0e0;
+}
+.date-picker table td.l-today:after {
+    content: " ";
+    border: 2px solid black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+.date-picker table td.l-selected {
+    background-color: #808080;
+    color: white;
+}
+.date-picker table th {
+    background-color: #c0c0c0;
+}
+
+.time-picker table {
+    border-collapse: collapse;
+}
+.time-picker table td {
+    padding: 2px 8px;
+    background-color: #ffffff;
+    position: relative;
+    color: #404040;
+}
+.time-picker table th:not(:empty) {
+    background-color: #c0c0c0;
+}
+.time-picker table td:not(:empty) {
+    cursor: pointer;
+}
+.time-picker table td:not(:empty):not(.l-selected):after {
+    content: " ";
+    border: 1px solid #c0c0c0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+.time-picker table td.l-div {
+    min-width: 2em;
+}
+.time-picker table td.l-selected {
+    background-color: #808080;
+    color: white;
+}

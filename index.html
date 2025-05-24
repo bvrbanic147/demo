@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/styles/default.css">
+<link rel="stylesheet" href="/styles/date-picker-popup.css">
+<script src="/scripts/utils.js"></script>
+<script src="/scripts/input-components.js"></script>
+</head>
+<body>
+<script>
+
+window.config = { numericLocale: "hr", dateLocale: "hr" };
+
+function intInput(props) {
+    return { ":tag": "number-input", precision: 0, allowNull: true, ...(props || {}) };
+}
+
+function floatInput(props) {
+    return { ":tag": "number-input", precision: 2, allowNull: true, ...(props || {}) };
+}
+
+document.body.appendChild(
+    buildTree([
+        "button", { textContent: () => "Test button", "on:click": (evt) => { console.log(evt); alert("1"); window.history.pushState({ url: "/a" }, "" , "/a") }},
+        "hr",
+        "div", { style: { background: "red", height: "12px" }},
+        "hr",
+        `button onclick="alert('2')"">Button 2`,
+        "button onclick='alert(`3`)'>Button 3</button>",
+        "hr",
+        "div", { "on:click": (evt) => alert("div click" ), "attr:style": "background: darkorange" }, [
+            "span>Span 1",
+            "div>Second child",
+        ],
+        "div style='background: orange'><span>xxx</span></div>",{ "on:click": (evt) => alert("div 2 click" )}, [
+            "span>Span 2",
+        ],
+        "div>yyy",{ "on:click": (evt) => alert("div 3 click" ), style: { background: "yellow" }}, [
+            "span>Span 3",
+        ],
+        { ":tag": "hr" },
+        "input", { value: () => "123", "on:input": (evt) => console.log("input-i", evt.target.value), "on:change": (evt) => console.log("change-i", evt.target.value) },
+        "textarea", { value: "123", "on:input": (evt) => console.log("input-ta", evt.target.value), "on:change": (evt) => console.log("change-ta", evt.target.value) },
+        "number-input", { value: "123", "on:input": (e) => console.log('num input', e.target.value), "on:change": (e) => console.log('num change', e.target.value) },
+        intInput(),
+        floatInput(),
+    ])
+);
+</script>
+<hr>
+<number-input value="12" precision="1" min="10" max="15.1" allownull="false"></number-input>
+<date-input type="date" value="2000-03-01"></date-input>
+<date-input type="datetime" value="2025-03-01T02:00:00.000+0100"></date-input>
+<date-input type="datetime-tz" value="2025-03-01T02:00:00.000+0100"></date-input>
+<date-input type="datetime" value="2025-05-01T02:00:00.000+0100"></date-input>
+<date-input type="datetime-tz" value="2025-05-01T02:00:00.000+0100"></date-input>
+<date-input type="time" value="01:02:03"></date-input>
+<date-input type="time-hm" value="02:04"></date-input>
+</body>
+</html>
