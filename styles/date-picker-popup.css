@@ -31,6 +31,7 @@
     width: 100%;
     text-align: center;
     font-size: 1em;
+    font-family: inherit;
 }
 .date-time-picker .l-value-display {
     font-size: 1.25em;
@@ -53,7 +54,7 @@
     justify-content: space-between;
 }
 .date-time-picker .l-select button {
-    padding: 0.25em 0.5em;
+    padding: 0.1em 0.5em;
 }
 
 .date-picker table {
@@ -61,25 +62,37 @@
     text-align: center;
     width: 100%;
 }
-.date-picker number-input {
-    width: 8em;
-}
-.date-picker number-input::part(input) {
+.date-picker input {
+    width: 4em;
     text-align: center;
+    border: none;
+    font-size: 1em;
+    outline: none;
+    flex: 1 0 auto;
+    font-family: inherit;
+    padding: 0;
 }
+.date-picker input[type="number"] {
+    -moz-appearance: textfield;
+}
+.date-picker input::-webkit-outer-spin-button,
+.date-picker input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
 .date-picker .l-buttons {
     width: 100%;
     display: flex;
-    justify-content: space-between;
 }
 .date-picker .l-buttons > * {
     flex: 1 1 auto;
 }
 .date-picker button.l-navig {
-    width: 1.75em;
-    flex: 0 0 1.75em;
+    max-width: 1.75em;
+    flex: 1 0 1.75em;
     border: none;
     font-size: 1em;
+    flex: 0 0 auto;
 }
 .date-picker .l-navig-wrapper {
     border: 1px solid #ccc;

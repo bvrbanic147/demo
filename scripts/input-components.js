@@ -18,22 +18,23 @@ customElements.define("number-input", class extends HTMLElement {
                     width: 12em;
                     min-height: 1.5em;
                     font-size: 1em;
+                    background: white;
                 }
                 :host(:focus-within) {
                     border-color: black;
                 }
 
                 button {
-                    padding: 0 0.5em;
                     border: none;
                     background-color: #eee;
                     color: #333;
                     cursor: pointer;
                     outline: none;
-                    min-width: 2em;
+                    min-width: 1.5em;
                     text-align: center;
                     user-select: none;
                     font-size: 1em;
+                    font-family: inherit;
                 }
 
                 button:hover {
@@ -60,6 +61,9 @@ customElements.define("number-input", class extends HTMLElement {
                     border: none;
                     outline: none;
                     font-size: 1em;
+                    background: none;
+                    font-family: inherit;
+                    text-align: inherit;
                 }
             </style>
             <button id="decrement" tabindex="-1" part="dec-button">-</button>
@@ -75,6 +79,8 @@ customElements.define("number-input", class extends HTMLElement {
         this.incrementButton.addEventListener("click", this._increment.bind(this));
         this.numberInput.addEventListener("change", this._handleChangeEvent.bind(this));
         this.numberInput.addEventListener("input", this._handleInputEvent.bind(this));
+
+        this.onclick = () => this.numberInput.focus();
     }
 
     static get observedAttributes() {
@@ -335,22 +341,30 @@ customElements.define("date-input", class extends HTMLElement {
                     width: 15em;
                     min-height: 1.5em;
                     font-size: 1em;
+                    background: white;
                 }
                 :host(:focus-within) {
                     border-color: black;
                 }
 
                 button {
-                    padding: 0 0.5em;
                     border: none;
-                    background-color: #eee;
+                    background: none;
                     color: #333;
                     cursor: pointer;
                     outline: none;
-                    min-width: 2em;
+                    min-width: 1.5em;
                     text-align: center;
                     user-select: none;
                     font-size: 1em;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    font-family: inherit;
+                }
+                button > div {
+                    transform: translateY(0.05em) scale(0.9);
                 }
 
                 button:hover {
@@ -368,10 +382,13 @@ customElements.define("date-input", class extends HTMLElement {
                     border: none;
                     outline: none;
                     font-size: 1em;
+                    background: none;
+                    font-family: inherit;
+                    text-align: inherit;
                 }
             </style>
             <input type="text" id="dateInput" value="" part="input">
-            <button id="popup" tabindex="-1" part="button">&#x1F4C5;</button>
+            <button id="popup" tabindex="-1" part="button"><div>&#x1F4C5;</div></button>
         `;
 
         this.popupButton = this.shadowRoot.getElementById("popup");
@@ -380,6 +397,8 @@ customElements.define("date-input", class extends HTMLElement {
         this.popupButton.addEventListener("click", this._popup.bind(this));
         this.dateInput.addEventListener("change", this._handleChangeEvent.bind(this));
         this.dateInput.addEventListener("input", this._handleInputEvent.bind(this));
+
+        this.onclick = () => this.dateInput.focus();
     }
 
     static get observedAttributes() {
@@ -572,7 +591,7 @@ customElements.define("date-input", class extends HTMLElement {
 
     set type(newValue) {
         this._type = ["date", "datetime", "datetime-tz", "time", "time-hm"].includes(newValue) ? newValue : "date";
-        this.popupButton.innerHTML = ["time", "time-hm"].includes(this._type) ? "&#x23F0;" : "&#x1F4C5;";
+        this.popupButton.innerHTML = ["time", "time-hm"].includes(this._type) ? "<div>&#x23F0;</div>" : "<div>&#x1F4C5;</div>";
         this._setFormattedValue();
     }
 
@@ -619,7 +638,6 @@ customElements.define("date-input", class extends HTMLElement {
     set showButtons(newValue) {
         this._showButtons = newValue;
         this.popupButton.style.display = newValue ? "" : "none";
-        this.decrementButton.style.display = newValue ? "" : "none";
     }
 
     _updateButtons() {
@@ -724,11 +742,15 @@ customElements.define("date-input", class extends HTMLElement {
                         },
                         "button class='l-navig'", { textContent: "\u25b6", "on:click": () => handleDateNavigation("m", 1) },
                     ],
-                    "number-input", {
-                        precision: 0, min: 1, max: 9999, dec: "\u25c0", inc: "\u25b6",
-                        value: parseInt(data.valueDate.slice(0, 4)),
-                        "on:change": (evt) => handleDateNavigation("ys", evt.target.value),
-                    },
+                    "div class='l-navig-wrapper'", [
+                        "button class='l-navig'", { textContent: "\u25c0", "on:click": () => handleDateNavigation("y", -1) },
+                        "input", {
+                            type: "number",
+                            value: data.valueDate.slice(0, 4),
+                            "on:change": (evt) => handleDateNavigation("ys", Math.min(9999, Math.max(1, parseInt(evt.target.value)))),
+                        },
+                        "button class='l-navig'", { textContent: "\u25b6", "on:click": () => handleDateNavigation("y", 1) },
+                    ],
                     "button", { className: "l-today", textContent: "⦾", title: "Today", "on:click": () => handleDateNavigation("t") },
                 ],
                 "table", [
@@ -918,8 +940,9 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     width: 1.5em;
                     height: 1.5em;
                     position: relative;
-                    font-size: 0.75em;
+                    font-size: 0.9em;
                     top: 0;
+                    background: white;
                 }
                 :host(:focus-within) {
                     border-color: black;
@@ -932,6 +955,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     appearance: none;
                     opacity: 0;
                     transform: scale(2);
+                    font-family: inherit;
                 }
 
                 .l-checked-render-true {
@@ -944,7 +968,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     justify-content: center;
                     align-items: center;
                     overflow: hidden;
-                    transform: scale(1.75);
+                    transform: scale(1.8) translateY(0.03em);
                     display: none;
                     pointer-events: none;
                     opacity: 1;
@@ -1036,10 +1060,10 @@ customElements.define("select-simple", class extends HTMLElement {
                     display: inline-flex;
                     border: 1px solid #ccc;
                     min-width: 5em;
-                    height: 1.5em;
+                    min-height: 1.5em;
                     position: relative;
-                    top: 0;
                     font-size: 1em;
+                    background: white;
                 }
                 :host(:focus-within) {
                     border-color: black;
@@ -1050,16 +1074,38 @@ customElements.define("select-simple", class extends HTMLElement {
                     border: none;
                     outline: none;
                     appearance: none;
-                    padding: 0 1.5em 0 0.5em;
-                    background: white;
+                    padding: 0.1em 1.75em 0 0.5em;
+                    background: none;
                     font-size: 1em;
+                    height: 1.25em;
+                    opacity: 0;
+                }
+
+                .l-label {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    padding: 0.1em 1.75em 0 0.5em;
+                    overflow: hidden;
+                    font-size: 1em;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    pointer-events: none;
+                    text-align: inherit;
+                }
+
+                .l-wrapper {
+                    position: relative;
+                    width: 100%;
                 }
 
                 .l-icon {
                     position: absolute;
                     user-select: none;
                     top: 0;
-                    right: 0;
+                    right: 0.25em;
                     bottom: 0;
                     width: 1.25em;
                     display: flex;
@@ -1068,13 +1114,13 @@ customElements.define("select-simple", class extends HTMLElement {
                     overflow: hidden;
                     pointer-events: none;
                     opacity: 0.75;
-                    background: white;
-                    transform: scale(0.8) rotate(0);
+                    background: none;
+                    transform: scale(1.25, 0.8) rotate(0);
                     transition: 0.3s transform;
                 }
 
                 select:open + .l-icon {
-                    transform: scale(0.8) rotate(180deg);
+                    transform: scale(1.25, 0.8) rotate(180deg);
                     transition: 0.3s transform;
                 }
 
@@ -1085,11 +1131,15 @@ customElements.define("select-simple", class extends HTMLElement {
                     opacity: 0.5;
                 }
             </style>
-            <select id="selectInput" part="select"><slot></slot></select>
-            <div class="l-icon" part="icon">▼</div>
+            <div class="l-wrapper" part="wrapper">
+                <select id="selectInput" part="select"><slot></slot></select>
+                <div class="l-icon" part="icon">▼</div>
+                <div id="label" class="l-label" part="label">dlfkgj dflkgj sldkfjg lskdjfg člksjdfglk</div>
+            </div>
         `;
 
         this.selectInput = this.shadowRoot.getElementById("selectInput");
+        this.selectLabel = this.shadowRoot.getElementById("label");
 
         this.selectInput.addEventListener("change", this._handleChangeEvent.bind(this));
     }
@@ -1132,9 +1182,12 @@ customElements.define("select-simple", class extends HTMLElement {
             else option.removeAttribute("selected");
         }
         if (!selected && allOptions.length > 0) {
-            allOptions[0].setAttribute("selected", "");
-            newValueStr = allOptions[0].value; 
+            selected = allOptions[0];
+            selected.setAttribute("selected", "");
+            newValueStr = selected.value; 
         }
+        this.selectLabel.innerText = selected?.innerText || "";
+        this.title = this.selectLabel.innerText;
         this.selectInput.value = newValueStr;
     }
 
@@ -1183,6 +1236,8 @@ customElements.define("select-simple", class extends HTMLElement {
     }
 
     _handleChangeEvent(evt) {
+        this.selectLabel.innerText = evt.target.selectedOptions?.[0]?.innerText || "";
+        this.title = this.selectLabel.innerText;
         this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
     }
 });
