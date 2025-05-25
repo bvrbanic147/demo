@@ -261,11 +261,13 @@ customElements.define("number-input", class extends HTMLElement {
         }
     }
 
-    _increment() {
+    _increment(evt) {
+        evt.stopPropagation();
         this._stepAdd(1);
     }
 
-    _decrement() {
+    _decrement(evt) {
+        evt.stopPropagation();
         this._stepAdd(-1);
     }
 
@@ -286,7 +288,8 @@ customElements.define("number-input", class extends HTMLElement {
     }
 
     _handleInputEvent() {
-        this._value = this._roundNumber(this._parseNumber(this.numberInput.value));
+        const value = this._roundNumber(this._parseNumber(this.numberInput.value));
+        this._value = Math.min(this.max ?? value, Math.max(this.min ?? value, value));
     }
 });
 
@@ -650,6 +653,7 @@ customElements.define("date-input", class extends HTMLElement {
     }
 
     _popup(evt) {
+        evt.stopPropagation();
         if (this.readOnly || this.disabled) return;
         this.dispatchEvent(new CustomEvent("popup", { detail: { value: this.value } }));
         this._showPopup(evt);
@@ -968,7 +972,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     justify-content: center;
                     align-items: center;
                     overflow: hidden;
-                    transform: scale(1.8) translateY(0.03em);
+                    transform: scale(1.5) translateY(0.03em);
                     display: none;
                     pointer-events: none;
                     opacity: 1;
