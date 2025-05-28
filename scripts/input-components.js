@@ -958,7 +958,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     outline: none;
                     appearance: none;
                     opacity: 0;
-                    transform: scale(2);
+                    margin: 0;
                     font-family: inherit;
                 }
 
@@ -972,7 +972,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     justify-content: center;
                     align-items: center;
                     overflow: hidden;
-                    transform: scale(1.5) translateY(0.03em);
+                    transform: scale(1.4) translateY(0.03em);
                     display: none;
                     pointer-events: none;
                     opacity: 1;
@@ -1063,11 +1063,13 @@ customElements.define("select-simple", class extends HTMLElement {
                 :host {
                     display: inline-flex;
                     border: 1px solid #ccc;
-                    min-width: 5em;
+                    min-width: 2em;
+                    max-width: 100%;
                     min-height: 1.5em;
                     position: relative;
                     font-size: 1em;
                     background: white;
+                    overflow: hidden;
                 }
                 :host(:focus-within) {
                     border-color: black;
@@ -1078,22 +1080,22 @@ customElements.define("select-simple", class extends HTMLElement {
                     border: none;
                     outline: none;
                     appearance: none;
-                    padding: 0.1em 1.75em 0 0.5em;
+                    padding: 0.1em 0.5em 0 0.5em;
                     background: none;
                     font-size: 1em;
-                    height: 1.25em;
                     opacity: 0;
+                    top: 0;
+                    left: 0;
+                    height: calc(100% + 2px);
+                    position: absolute;
+                    transform: translateY(-1px);
                 }
 
                 .l-label {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
                     padding: 0.1em 1.75em 0 0.5em;
                     overflow: hidden;
                     font-size: 1em;
+                    height: 1.2em;
                     white-space: nowrap;
                     text-overflow: ellipsis;
                     pointer-events: none;
@@ -1103,13 +1105,14 @@ customElements.define("select-simple", class extends HTMLElement {
                 .l-wrapper {
                     position: relative;
                     width: 100%;
+                    pointer-events: none;
                 }
 
                 .l-icon {
                     position: absolute;
                     user-select: none;
                     top: 0;
-                    right: 0.25em;
+                    right: 0.33em;
                     bottom: 0;
                     width: 1.25em;
                     display: flex;
@@ -1135,10 +1138,10 @@ customElements.define("select-simple", class extends HTMLElement {
                     opacity: 0.5;
                 }
             </style>
+            <select id="selectInput" part="select"><slot></slot></select>
+            <div class="l-icon" part="icon">▼</div>
             <div class="l-wrapper" part="wrapper">
-                <select id="selectInput" part="select"><slot></slot></select>
-                <div class="l-icon" part="icon">▼</div>
-                <div id="label" class="l-label" part="label">dlfkgj dflkgj sldkfjg lskdjfg člksjdfglk</div>
+                <div id="label" class="l-label" part="label"></div>
             </div>
         `;
 
