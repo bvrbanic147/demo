@@ -42,7 +42,7 @@
 
 - checkbox-input
 
-- select-simple
+- select-native
     - uses "options" as attribute(stringified JSON array)/prop(array)
         - array of tuples ([["a", "value a"], ["b", "value b"]])
         - or array of items ([{ value: "a", label: "value a" }, { value: "b", label: "value b" }])

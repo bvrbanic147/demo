@@ -67,7 +67,7 @@ customElements.define("number-input", class extends HTMLElement {
                 }
             </style>
             <button id="decrement" tabindex="-1" part="dec-button">-</button>
-            <input type="text" id="numberInput" value="" part="input">
+            <input type="text" id="numberInput" value="" part="input" autocomplete="off">
             <button id="increment" tabindex="-1" part="inc-button">+</button>
         `;
 
@@ -390,7 +390,7 @@ customElements.define("date-input", class extends HTMLElement {
                     text-align: inherit;
                 }
             </style>
-            <input type="text" id="dateInput" value="" part="input">
+            <input type="text" id="dateInput" value="" part="input" autocomplete="off">
             <button id="popup" tabindex="-1" part="button"><div>&#x1F4C5;</div></button>
         `;
 
@@ -989,7 +989,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     cursor: not-allowed;
                 }
             </style>
-            <input type="checkbox" id="checkboxInput" part="input">
+            <input type="checkbox" id="checkboxInput" part="input" autocomplete="off">
             <div class="l-checked-render-true">✔</div>
         `;
 
@@ -1054,7 +1054,118 @@ customElements.define("checkbox-input", class extends HTMLElement {
     }
 });
 
-customElements.define("select-simple", class extends HTMLElement {
+function openPopup(options) {
+    const element = document.createElement("div");
+    document.body.appendChild(element);
+
+    const handleClose = (evt) => {
+        document.body.removeChild(element);
+    };
+
+    const data = {
+        container: null,
+        target: options.target,
+        align: options.align,
+        position: options.position || "bottom",
+        usedPosition: "",
+        initialPosition: { top: (options.pageY || 0) + "px", left: (options.pageX || 0) + "px" },
+    };
+
+    if (options.target) {
+        const rect = options.target.getBoundingClientRect();
+        data.initialPosition = { top: (rect.top + options.target.offsetHeight) + "px", left: rect.left + "px" };
+    }
+
+    const calcPosition = (self) => {
+        const parent = self.parentElement;
+        let tryCount = 3;
+        let tryPosition = data.usedPosition || data.position;
+        const rect = data.target?.getBoundingClientRect?.();
+        while (tryCount) {
+            if (options.target) {
+                switch (data.align || "") {
+                    case "right":
+                        self.style.left = (rect.right - self.clientWidth) + "px";
+                        break;
+                    case "center":
+                        self.style.left = (rect.left + (rect.width - self.clientWidth) / 2) + "px";
+                        break;
+                    default:
+                        self.style.left = rect.left + "px";
+                        break;
+                }
+                if (tryPosition === "top") {
+                    self.style.top = (rect.top - self.offsetHeight) + "px";
+                }
+                else {
+                    self.style.top = (rect.top + data.target.offsetHeight) + "px";
+                }
+            }
+
+            let left = parseFloat(self.style.left);
+            if (left < 0) {
+                left = 0;
+                self.style.left = "0px";
+            }
+            if (parent.scrollWidth > parent.clientWidth) {
+                left = Math.max(0, left - (parent.scrollWidth - parent.clientWidth) - 1);
+                self.style.left = left + "px";
+            }
+
+            let top = parseFloat(self.style.top);
+            if (top < 0) {
+                top = 0;
+                self.style.top = "0px";
+            }
+            if (parent.scrollHeight > parent.clientHeight) {
+                top = Math.max(0, top - (parent.scrollHeight - parent.clientHeight) - 1);
+                self.style.top = top + "px";
+            }
+
+            if (!options.target) break;
+
+            if (tryPosition === "top") {
+                if (rect.top > (top + self.offsetHeight - 1)) break;
+                tryPosition = "bottom";
+            }
+            else {
+                if (rect.bottom < (top + 1)) break;
+                tryPosition = "top";
+            }
+
+            tryCount--;
+        }
+
+        data.usedPosition = tryPosition;
+    };
+
+    buildTree(
+        [
+            "div", {
+                style: { background: "none", position: "fixed", left: 0, top: 0, right: 0, bottom: 0, overflow: "auto" },
+                "on:click": handleClose,
+            }, [
+                "div", {
+                    style: { position: "absolute", ...data.initialPosition },
+                    "on:click": (evt) => evt.stopPropagation(),
+                    ":after": (self) => {
+                        data.container = self;
+                        self.innerHTML = options.renderHTML || "";
+                        if (options.renderElement) self.appendChild(options.renderElement);
+                        calcPosition(self);
+                    },
+                },
+            ]
+        ], null, element
+    );
+
+    return {
+        close: () => element.parentElement?.removeChild(element),
+        calcPosition: !data.target ? () => null : () => calcPosition(data.container),
+    };
+}
+
+customElements.define("select-native", class extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -1227,7 +1338,7 @@ customElements.define("select-simple", class extends HTMLElement {
             const option = document.createElement("option");
             if (Array.isArray(item)) {
                 option.value = item[0]?.toString() ?? "";
-                option.textContent = item[1]?.toString() ?? item[0] ?? "";
+                option.textContent = item[1]?.toString() ?? item[0]?.toString() ?? "";
             }
             else if (typeof item === "object") {
                 option.value = item.value?.toString() ?? "";
@@ -1243,8 +1354,299 @@ customElements.define("select-simple", class extends HTMLElement {
     }
 
     _handleChangeEvent(evt) {
-        this.selectLabel.innerText = evt.target.selectedOptions?.[0]?.innerText || "";
+        this.selectLabel.innerText = evt.target.selectedOptions?.[0]?.innerText || "\u00a0";
         this.title = this.selectLabel.innerText;
         this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
+    }
+});
+
+customElements.define("select-simple", class extends HTMLElement {
+    _options = [];
+    _value = "";
+    _popupPosition = 0;
+
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-flex;
+                    border: 1px solid #ccc;
+                    min-width: 2em;
+                    max-width: 100%;
+                    min-height: 1.5em;
+                    position: relative;
+                    font-size: 1em;
+                    background: white;
+                    overflow: hidden;
+                }
+                :host(:focus-within) {
+                    border-color: black;
+                }
+
+                input {
+                    border: none;
+                    outline: none;
+                    appearance: none;
+                    padding: 0.1em 1.75em 0 0.5em;
+                    background: none;
+                    font-size: 1em;
+                    position: absolute;
+                    font-family: inherit;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    user-select: none;
+                }
+
+                .l-label {
+                    padding: 0.1em 1.75em 0 0.5em;
+                    overflow: hidden;
+                    font-size: 1em;
+                    height: 1.2em;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    pointer-events: none;
+                    text-align: inherit;
+                    opacity: 1;
+                }
+
+                .l-wrapper {
+                    position: relative;
+                    width: 100%;
+                    pointer-events: none;
+                }
+
+                .l-icon {
+                    position: absolute;
+                    user-select: none;
+                    top: 0;
+                    right: 0.33em;
+                    bottom: 0;
+                    width: 1.25em;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    cursor: pointer;
+                    opacity: 0.75;
+                    background: none;
+                    transform: scale(1.25, 0.8) rotate(0);
+                    transition: 0.3s transform;
+                }
+
+                :host(:focus-within) .l-icon {
+                    transform: scale(1.25, 0.8) rotate(180deg);
+                    transition: 0.3s transform;
+                }
+
+                input::placeholder {
+                    opacity: 0;
+                }
+                input:not(:placeholder-shown) + .l-label {
+                    opacity: 0;
+                }
+
+                input:disabled {
+                    cursor: not-allowed;
+                }
+                input:disabled + .l-icon {
+                    opacity: 0.5;
+                }
+            </style>
+            <div id="icon" class="l-icon" part="icon">▼</div>
+            <div class="l-wrapper" part="wrapper">
+                <input id="selectInput" part="select" placeholder="!" autocomplete="off">
+                <div id="label" class="l-label" part="label">12345</div>
+            </div>
+        `;
+
+        this.selectInput = this.shadowRoot.getElementById("selectInput");
+        this.selectLabel = this.shadowRoot.getElementById("label");
+        this.iconElement = this.shadowRoot.getElementById("icon");
+
+        this.selectInput.addEventListener("keydown", this._handleKeyEvent.bind(this));
+        this.selectInput.addEventListener("input", this._handleInputEvent.bind(this));
+        this.selectInput.addEventListener("blur", this._handleBlurEvent.bind(this));
+        this.iconElement.addEventListener("click", this._handleIconClickEvent.bind(this));
+        this.onclick = () => {
+            this.selectInput.focus();
+            this._drawPopup(0);
+        };
+    }
+
+    static get observedAttributes() {
+        return ["readonly", "disabled", "options", "value"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        switch (name) {
+            case "readonly":
+                this.readOnly = newValue !== "false" && newValue !== null;
+                break;
+            case "disabled":
+                this.disabled = newValue !== "false" && newValue !== null;
+                break;
+            case "options":
+                this.options = JSON.parse(newValue);
+                break;
+            case "value":
+                this.value = newValue;
+                break;
+        }
+    }
+
+    get value() {
+        return this._value;
+    }
+
+    set value(newValue) {
+        this._value = newValue?.toString() || "";
+        this._updateLabel();
+    }
+
+    get readOnly() {
+        return this.disabled;
+    }
+
+    set readOnly(newValue) {
+        this.disabled = newValue;
+    }
+
+    get disabled() {
+        return this.selectInput.disabled;
+    }
+
+    set disabled(newValue) {
+        this.selectInput.disabled = newValue;
+    }
+
+    get options() {
+        return this._options;
+    }
+
+    set options(newValue) {
+        const list = [];
+        for (let item of newValue) {
+            if (!item) continue;
+            const option = {};
+            if (Array.isArray(item)) {
+                option.value = item[0]?.toString() ?? "";
+                option.label = item[1]?.toString() ?? item[0]?.toString() ?? "";
+            }
+            else if (typeof item === "object") {
+                option.value = item.value?.toString() ?? "";
+                option.label = item.label ?? "";
+            }
+            else {
+                option.value = item?.toString() ?? "";
+                option.label = option.value;
+            }
+            list.push(option);
+        }
+        this._options = list;
+        this._updateLabel();
+    }
+
+    _updateLabel() {
+        const option = this._options.find(x => x.value === this._value);
+        this.selectLabel.innerText = option?.label || "\u00a0";
+        this.title = this.selectLabel.innerText;
+    }
+
+    _handleKeyEvent(evt) {
+        switch (evt.key) {
+            case "ArrowUp":
+                this._drawPopup(this._popup ? -1 : 0);
+                evt.preventDefault();
+                break;
+            case "ArrowDown":
+                this._drawPopup(this._popup ? 1 : 0);
+                evt.preventDefault();
+                break;
+            case "Escape":
+                this._closePopup();
+                evt.preventDefault();
+                break;
+            case "Enter":
+                if (this._popupItem) this._selectValue(this._popupItem.value);
+                break;
+        }
+    }
+
+    _selectValue(value) {
+        if (this.value === value) return;
+        this.value = value;
+        this._updateLabel();
+        this._closePopup();
+        this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
+    }
+
+    _drawPopup(direction) {
+        const search = this.selectInput.value.toLowerCase();
+        const list = this._options.filter(x => x.label.toLowerCase().includes(search) || x.label === "");
+
+        if (direction === 0) this._popupPosition = 0;
+        else {
+            this._popupPosition = this._popupPosition + direction;
+            if (this._popupPosition < 0) this._popupPosition = list.length - 1;
+            if (this._popupPosition >= list.length) this._popupPosition = 0;
+        }
+        this._popupItem = list[this._popupPosition];
+
+        if (!this._popupContainer) {
+            this._popupContainer = document.createElement("div");
+            this._popupContainer.className = "select-simple-popup";
+        }
+
+        if (list.length === 0) this._popupContainer.innerHTML = "<span>empty</span>";
+        else this._popupContainer.innerHTML = "";
+
+        const currentValue = this.value;
+        list.forEach((item, itemIndex) => {
+            buildTree({
+                ":tag": "div",
+                className: (itemIndex === this._popupPosition ? "l-focus" : "") + (item.value === currentValue ? " l-active" : ""),
+                textContent: item.label || "\u00a0",
+                "on:click": () => this._selectValue(item.value),
+            }, null, this._popupContainer);
+        });
+
+        if (!this._popup) {
+            this._popup = openPopup({ target: this, align: "left", position: "top", renderElement: this._popupContainer });
+            this._popupCounter = (this._popupCounter || 0) + 1;
+        }
+        else this._popup.calcPosition();
+    }
+
+    _handleInputEvent() {
+        this._drawPopup(0);
+        this.selectLabel.innerText = this.selectInput.value.trim() || "\u00a0";
+    }
+
+    _handleIconClickEvent() {
+        this._drawPopup(0);
+    }
+
+    _closePopup() {
+        this.selectInput.value = "";
+        this._popup?.close();
+        this._popup = null;
+        this._popupContainer = null;
+        this._popupPosition = 0;
+        this._popupItem = null;
+        this._updateLabel();
+    }
+
+    _handleBlurEvent(evt) {
+        if (this._popup) {
+            const storedPopupCounter = this._popupCounter;
+            setTimeout(() => {
+                if (storedPopupCounter === this._popupCounter) this._closePopup();
+            }, 250);
+        }
     }
 });

@@ -18,8 +18,6 @@ function buildTree(tree, data, root, options) {
                     else {
                         const tag = item[":tag"];
                         const children = item[":children"];
-                        delete item[":tag"];
-                        delete item[":children"];
                         if (tag) parent.appendChild(lastElement = document.createElement(tag));
                         if (!lastElement) throw new Error("List didn't start with tag definition");
                         let after;
@@ -38,6 +36,9 @@ function buildTree(tree, data, root, options) {
                                 }
                                 else {
                                     switch (prop) {
+                                        case ":tag":
+                                        case ":children":
+                                            break;
                                         case "style":
                                             if (value && typeof value === "object") {
                                                 for (let [k, v] of Object.entries(value)) {
@@ -76,7 +77,7 @@ function buildTree(tree, data, root, options) {
     }
 
     const elem = root ? (typeof root === "string" ? document.createElement(root) : root) : document.createElement("div");
-    elem[":data"] = data;
+    if (data) elem[":data"] = data;
     options?.[":before"]?.(elem, data);
     walk(elem, Array.isArray(tree) ? tree : [tree]);
     options?.[":after"]?.(elem, data);
