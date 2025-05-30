@@ -25,7 +25,7 @@ input, textarea {
 input:focus, textarea:focus {
     border-color: #000;
 }
-number-input, date-input, select-native, select-simple, input, textarea {
+number-input, date-input, select-native, select-simple, select-multi, input, textarea {
     padding: 0.5em;
     border-radius: 0.5em;
 }
@@ -43,47 +43,47 @@ function floatInput(props) {
 
 document.body.appendChild(
     buildTree([
-        "button", { textContent: () => "Test button", "on:click": (evt) => { console.log(evt); alert("1"); window.history.pushState({ url: "/a" }, "" , "/a") }},
+        "button", { textContent: () => "Test button", ":onclick": (evt) => { console.log(evt); alert("1"); window.history.pushState({ url: "/a" }, "" , "/a") }},
         "hr",
         "div", { style: { background: "red", height: "12px" }},
         "hr",
         `button onclick="alert('2')"">Button 2`,
         "button onclick='alert(`3`)'>Button 3</button>",
         "hr",
-        "div", { "on:click": (evt) => alert("div click" ), "attr:style": "background: darkorange" }, [
+        "div", { ":onclick": (evt) => alert("div click" ), "attr:style": "background: darkorange" }, [
             "span>Span 1",
             "div>Second child",
         ],
-        "div style='background: orange'><span>xxx</span></div>",{ "on:click": (evt) => alert("div 2 click" )}, [
+        "div style='background: orange'><span>xxx</span></div>",{ ":onclick": (evt) => alert("div 2 click" )}, [
             "span>Span 2",
         ],
-        "div>yyy",{ "on:click": (evt) => alert("div 3 click" ), style: { background: "yellow" }}, [
+        "div>yyy",{ ":onclick": (evt) => alert("div 3 click" ), style: { background: "yellow" }}, [
             "span>Span 3",
         ],
         { ":tag": "hr" },
-        "input", { value: () => "123", "on:input": (evt) => console.log("input-i", evt.target.value), "on:change": (evt) => console.log("change-i", evt.target.value) },
-        "textarea", { value: "123", "on:input": (evt) => console.log("input-ta", evt.target.value), "on:change": (evt) => console.log("change-ta", evt.target.value) },
-        "number-input", { value: "123", "on:input": (e) => console.log('num input', e.target.value), "on:change": (e) => console.log('num change', e.target.value) },
-        "date-input", { "on:change": (evt) => console.log(evt) },
+        "input", { value: () => "123", ":oninput": (evt) => console.log("input-i", evt.target.value), ":onchange": (evt) => console.log("change-i", evt.target.value) },
+        "textarea", { value: "123", ":oninput": (evt) => console.log("input-ta", evt.target.value), ":onchange": (evt) => console.log("change-ta", evt.target.value) },
+        "number-input", { value: "123", ":oninput": (e) => console.log('num input', e.target.value), ":onchange": (e) => console.log('num change', e.target.value) },
+        "date-input", { ":onchange": (evt) => console.log(evt) },
         intInput(),
         floatInput(),
         "hr",
         "button>popup test", {
-            "on:click": (evt) => evt.target[":popup"] = openPopup({
+            ":onclick": (evt) => evt.target[":popup"] = openPopup({
                 pageX: evt.pageX - evt.offsetX - 1,
                 pageY: evt.pageY - evt.offsetY + evt.target.offsetHeight - 1,
                 renderHTML: "<div style='background: red; width: 120px; height: 75px'></div>",
             }),
-            // "on:blur": (evt) => evt.target[":popup"]?.close?.()
+            // ":onblur": (evt) => evt.target[":popup"]?.close?.()
         },
         "button>popup test 2", {
-            "on:click": (evt) => evt.target[":popup"] = openPopup({
+            ":onclick": (evt) => evt.target[":popup"] = openPopup({
                 target: evt.target,
                 align: "center",
                 position: "top",
                 renderHTML: "<div style='background: red; width: 120px; height: 275px; border: 5px solid black'></div>",
             }),
-            // "on:blur": (evt) => evt.target[":popup"]?.close?.()
+            // ":onblur": (evt) => evt.target[":popup"]?.close?.()
         },
     ])
 );
@@ -98,9 +98,13 @@ document.body.appendChild(
 <date-input type="time" value="01:02:03" onchange="console.log(event.target.value, event)"></date-input>
 <date-input type="time-hm" value="02:04"></date-input>
 <div>
-    <label>a: <checkbox-input onchange="console.log(event.target.value, event)"></checkbox-input></label>
+    <label>a:
+        <checkbox-input onchange="console.log(event.target.value, event)"></checkbox-input>
+        <checkbox-input indeterminate onchange="console.log(event.target.value, event)"></checkbox-input>
+    </label>
 </div>
 <select-native options='[[""],[1],[2, "Text #2"],[3, "long text #3"]]' value="3" onchange="console.log(event.target.value, event)"></select-native>
 <select-simple options='[[null, ""],[1],["2", "Text #2"],["3", "long text #3"],[true, "true", "&gt; true [✔] &lt;"],[false]]' value="3" popupwidth="200px" popupposition="top" popupalign="center" onchange="console.log({value: event.target.value, event})"></select-simple>
+<select-multi options='[[null, ""],[1],["2", "Text #2"],["3", "long text #3"],[true, "true", "&gt; true [✔] &lt;"],[false]]' value="[]" onchange="console.log({value: event.target.value, event})" style="height: 10em"></select-multi>
 </body>
 </html>

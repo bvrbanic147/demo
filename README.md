@@ -11,7 +11,7 @@
         - object - properties of a previous element
             - if ":tag:" property is defined, creates an element with this tag type (doesn't use the previous tag, previous becomes this element)
             - ":children" tag is defined (and it is an array) => "inline" children definition
-            - event handlers are attached with "on:xxx" rule (note ":") so the function is not resolved
+            - event handlers are attached with ":onxxx" rule (note ":on") so the function is not resolved
             - attributes can be used like "attr:style": "display: none; color: white"
             - ":before" callback is called when encountered in prop list
             - ":after" callback is called after all props are applied
@@ -46,3 +46,7 @@
     - uses "options" as attribute(stringified JSON array)/prop(array)
         - array of tuples ([["a", "value a"], ["b", "value b"]])
         - or array of items ([{ value: "a", label: "value a" }, { value: "b", label: "value b" }])
+
+- select-simple
+
+- select-multi
