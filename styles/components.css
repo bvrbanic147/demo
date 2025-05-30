@@ -1,30 +1,36 @@
 .select-simple-popup {
     background: white;
-    box-shadow: 2px 2px 4px #808080;
+    box-shadow: 1px 1px 3px #808080;
     font-size: 1em;
     max-width: 99vw;
-    max-height: 10em;
-    overflow: auto;
-    padding: 0.5em;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2em;
+    padding: 0.5em 0.25em 0.5em 0.5em;
     color: black;
     user-select: none;
+    line-height: 1.2;
 }
-.select-simple-popup span {
+.select-simple-popup .l-scroller {
+    width: 100%;
+    height: 100%;
+    max-height: 10.4em;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+}
+.select-simple-popup .l-scroller span {
     opacity: 0.25;
 }
-.select-simple-popup div {
+.select-simple-popup .l-scroller div {
     cursor: pointer;
-    padding: 0.2em 0.5em;
+    padding: 0.4em 0.5em;
+    margin: 0 0.25em 0 0;
 }
 .select-simple-popup div.l-active {
-    background: #f0f0f0;
+    background: #e8e8e8;
 }
 .select-simple-popup div.l-focus {
     background: #c0c0c0;
 }
-.select-simple-popup div:hover {
+.select-simple-popup .l-scroller div:hover {
     background: #e0e0e0;
 }

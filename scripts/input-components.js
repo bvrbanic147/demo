@@ -972,7 +972,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     justify-content: center;
                     align-items: center;
                     overflow: hidden;
-                    transform: scale(1.4) translateY(0.03em);
+                    transform: scale(0.9);
                     display: none;
                     pointer-events: none;
                     opacity: 1;
@@ -990,7 +990,17 @@ customElements.define("checkbox-input", class extends HTMLElement {
                 }
             </style>
             <input type="checkbox" id="checkboxInput" part="input" autocomplete="off">
-            <div class="l-checked-render-true">✔</div>
+            <div class="l-checked-render-true">
+                <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 45.701 45.7" xml:space="preserve">
+                    <g>
+                        <g>
+                            <path d="M20.687,38.332c-2.072,2.072-5.434,2.072-7.505,0L1.554,26.704c-2.072-2.071-2.072-5.433,0-7.504
+                                c2.071-2.072,5.433-2.072,7.505,0l6.928,6.927c0.523,0.522,1.372,0.522,1.896,0L36.642,7.368c2.071-2.072,5.433-2.072,7.505,0
+                                c0.995,0.995,1.554,2.345,1.554,3.752c0,1.407-0.559,2.757-1.554,3.752L20.687,38.332z"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
         `;
 
         this.checkboxInput = this.shadowRoot.getElementById("checkboxInput");
@@ -1057,10 +1067,6 @@ customElements.define("checkbox-input", class extends HTMLElement {
 function openPopup(options) {
     const element = document.createElement("div");
     document.body.appendChild(element);
-
-    const handleClose = (evt) => {
-        document.body.removeChild(element);
-    };
 
     const data = {
         container: null,
@@ -1139,6 +1145,16 @@ function openPopup(options) {
         data.usedPosition = tryPosition;
     };
 
+    const handleWindowResize = () => {
+        calcPosition(data.container);
+    };
+    window.addEventListener("resize", handleWindowResize);
+
+    const handleClose = (evt) => {
+        element.parentElement?.removeChild(element);
+        window.removeEventListener("resize", handleWindowResize);
+    };
+
     buildTree(
         [
             "div", {
@@ -1160,7 +1176,7 @@ function openPopup(options) {
     );
 
     return {
-        close: () => element.parentElement?.removeChild(element),
+        close: () => handleClose(),
         calcPosition: !data.target ? () => null : () => calcPosition(data.container),
     };
 }
@@ -1191,7 +1207,7 @@ customElements.define("select-native", class extends HTMLElement {
                     border: none;
                     outline: none;
                     appearance: none;
-                    padding: 0.1em 0.5em 0 0.5em;
+                    padding: 0 0.5em 0.1em 0.5em;
                     background: none;
                     font-size: 1em;
                     opacity: 0;
@@ -1203,7 +1219,7 @@ customElements.define("select-native", class extends HTMLElement {
                 }
 
                 .l-label {
-                    padding: 0.1em 1.75em 0 0.5em;
+                    padding: 0 1.75em 0.1em 0.5em;
                     overflow: hidden;
                     font-size: 1em;
                     height: 1.2em;
@@ -1363,7 +1379,7 @@ customElements.define("select-native", class extends HTMLElement {
 customElements.define("select-simple", class extends HTMLElement {
     _options = [];
     _value = "";
-    _popupPosition = 0;
+    _popupListPosition = 0;
 
     constructor() {
         super();
@@ -1389,7 +1405,7 @@ customElements.define("select-simple", class extends HTMLElement {
                     border: none;
                     outline: none;
                     appearance: none;
-                    padding: 0.1em 1.75em 0 0.5em;
+                    padding: 0 1.75em 0.1em 0.5em;
                     background: none;
                     font-size: 1em;
                     position: absolute;
@@ -1402,7 +1418,7 @@ customElements.define("select-simple", class extends HTMLElement {
                 }
 
                 .l-label {
-                    padding: 0.1em 1.75em 0 0.5em;
+                    padding: 0 1.75em 0.1em 0.5em;
                     overflow: hidden;
                     font-size: 1em;
                     height: 1.2em;
@@ -1430,14 +1446,14 @@ customElements.define("select-simple", class extends HTMLElement {
                     justify-content: center;
                     align-items: center;
                     overflow: hidden;
-                    cursor: pointer;
                     opacity: 0.75;
                     background: none;
                     transform: scale(1.25, 0.8) rotate(0);
                     transition: 0.3s transform;
+                    cursor: pointer;
                 }
 
-                :host(:focus-within) .l-icon {
+                .l-icon.m-open {
                     transform: scale(1.25, 0.8) rotate(180deg);
                     transition: 0.3s transform;
                 }
@@ -1446,6 +1462,9 @@ customElements.define("select-simple", class extends HTMLElement {
                     opacity: 0;
                 }
                 input:not(:placeholder-shown) + .l-label {
+                    opacity: 0;
+                }
+                input:placeholder-shown {
                     opacity: 0;
                 }
 
@@ -1473,12 +1492,12 @@ customElements.define("select-simple", class extends HTMLElement {
         this.iconElement.addEventListener("click", this._handleIconClickEvent.bind(this));
         this.onclick = () => {
             this.selectInput.focus();
-            this._drawPopup(0);
+            this._drawPopup("");
         };
     }
 
     static get observedAttributes() {
-        return ["readonly", "disabled", "options", "value"];
+        return ["readonly", "disabled", "options", "value", "popupwidth", "popupposition", "popupalign"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -1496,6 +1515,15 @@ customElements.define("select-simple", class extends HTMLElement {
             case "value":
                 this.value = newValue;
                 break;
+            case "popupwidth":
+                this.popupWidth = newValue;
+                break;
+            case "popupposition":
+                this.popupPosition = newValue;
+                break;
+            case "popupalign":
+                this.popupAlign = newValue;
+                break;
         }
     }
 
@@ -1506,6 +1534,30 @@ customElements.define("select-simple", class extends HTMLElement {
     set value(newValue) {
         this._value = newValue?.toString() || "";
         this._updateLabel();
+    }
+
+    get popupWidth() {
+        return this._popupWidth;
+    }
+
+    set popupWidth(newValue) {
+        this._popupWidth = newValue;
+    }
+
+    get popupPosition() {
+        return this._popupPosition;
+    }
+
+    set popupPosition(newValue) {
+        this._popupPosition = newValue;
+    }
+
+    get popupAlign() {
+        return this._popupAlign;
+    }
+
+    set popupAlign(newValue) {
+        this._popupAlign = newValue;
     }
 
     get readOnly() {
@@ -1534,16 +1586,18 @@ customElements.define("select-simple", class extends HTMLElement {
             if (!item) continue;
             const option = {};
             if (Array.isArray(item)) {
-                option.value = item[0]?.toString() ?? "";
+                option.value = item[0];
                 option.label = item[1]?.toString() ?? item[0]?.toString() ?? "";
+                option.html = item[2] ?? null;
             }
             else if (typeof item === "object") {
-                option.value = item.value?.toString() ?? "";
+                option.value = item.value;
                 option.label = item.label ?? "";
+                option.html = item.html ?? null;
             }
             else {
-                option.value = item?.toString() ?? "";
-                option.label = option.value;
+                option.value = item;
+                option.label = option.value?.toString() ?? "";
             }
             list.push(option);
         }
@@ -1555,16 +1609,17 @@ customElements.define("select-simple", class extends HTMLElement {
         const option = this._options.find(x => x.value === this._value);
         this.selectLabel.innerText = option?.label || "\u00a0";
         this.title = this.selectLabel.innerText;
+        if (option?.html) this.selectLabel.innerHTML = option.html;
     }
 
     _handleKeyEvent(evt) {
         switch (evt.key) {
             case "ArrowUp":
-                this._drawPopup(this._popup ? -1 : 0);
+                this._drawPopup(this._popup ? -1 : "");
                 evt.preventDefault();
                 break;
             case "ArrowDown":
-                this._drawPopup(this._popup ? 1 : 0);
+                this._drawPopup(this._popup ? 1 : "");
                 evt.preventDefault();
                 break;
             case "Escape":
@@ -1573,13 +1628,20 @@ customElements.define("select-simple", class extends HTMLElement {
                 break;
             case "Enter":
                 if (this._popupItem) this._selectValue(this._popupItem.value);
+                else this._drawPopup("");
+                break;
+            case " ":
+                if (!this._popupItem) {
+                    evt.preventDefault();
+                    this._drawPopup("");
+                }
                 break;
         }
     }
 
     _selectValue(value) {
-        if (this.value === value) return;
-        this.value = value;
+        if (this._value === value) return;
+        this._value = value;
         this._updateLabel();
         this._closePopup();
         this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
@@ -1589,37 +1651,46 @@ customElements.define("select-simple", class extends HTMLElement {
         const search = this.selectInput.value.toLowerCase();
         const list = this._options.filter(x => x.label.toLowerCase().includes(search) || x.label === "");
 
-        if (direction === 0) this._popupPosition = 0;
-        else {
-            this._popupPosition = this._popupPosition + direction;
-            if (this._popupPosition < 0) this._popupPosition = list.length - 1;
-            if (this._popupPosition >= list.length) this._popupPosition = 0;
+        if (direction === "") {
+            const index = list.findIndex(x => x.value === this._value);
+            if (index >= 0) this._popupListPosition = index;
         }
-        this._popupItem = list[this._popupPosition];
+        else if (direction === 0) this._popupListPosition = 0;
+        else {
+            this._popupListPosition = this._popupListPosition + direction;
+            if (this._popupListPosition < 0) this._popupListPosition = list.length - 1;
+            if (this._popupListPosition >= list.length) this._popupListPosition = 0;
+        }
+        this._popupItem = list[this._popupListPosition];
 
         if (!this._popupContainer) {
             this._popupContainer = document.createElement("div");
             this._popupContainer.className = "select-simple-popup";
+            this._popupContainer.innerHTML = `<div class="l-scroller"></div>`;
+            this._popupContainer.style.width = this._popupWidth;
         }
+        const scroller = this._popupContainer.firstElementChild;
 
-        if (list.length === 0) this._popupContainer.innerHTML = "<span>empty</span>";
-        else this._popupContainer.innerHTML = "";
+        if (list.length === 0) scroller.innerHTML = "<span>empty</span>";
+        else scroller.innerHTML = "";
 
-        const currentValue = this.value;
         list.forEach((item, itemIndex) => {
             buildTree({
                 ":tag": "div",
-                className: (itemIndex === this._popupPosition ? "l-focus" : "") + (item.value === currentValue ? " l-active" : ""),
-                textContent: item.label || "\u00a0",
+                className: (itemIndex === this._popupListPosition ? "l-focus" : "") + (item.value === this._value ? " l-active" : ""),
+                innerHTML: item.html ?? htmlEscape(item.label || "\u00a0"),
                 "on:click": () => this._selectValue(item.value),
-            }, null, this._popupContainer);
+            }, null, scroller);
         });
 
         if (!this._popup) {
-            this._popup = openPopup({ target: this, align: "left", position: "top", renderElement: this._popupContainer });
+            this._popup = openPopup({ target: this, align: this.popupAlign || "left", position: this.popupPosition || "bottom", renderElement: this._popupContainer });
             this._popupCounter = (this._popupCounter || 0) + 1;
+            this.iconElement.classList.add("m-open");
         }
         else this._popup.calcPosition();
+
+        scroller.querySelector(".l-focus")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     _handleInputEvent() {
@@ -1632,11 +1703,12 @@ customElements.define("select-simple", class extends HTMLElement {
     }
 
     _closePopup() {
+        this.iconElement.classList.remove("m-open");
         this.selectInput.value = "";
         this._popup?.close();
         this._popup = null;
         this._popupContainer = null;
-        this._popupPosition = 0;
+        this._popupListPosition = 0;
         this._popupItem = null;
         this._updateLabel();
     }

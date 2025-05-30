@@ -1,3 +1,12 @@
+function htmlEscape(text) {
+  return String(text)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function iif(condition, ...list) {
     return condition ? list : [];
 }
