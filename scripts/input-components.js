@@ -1197,6 +1197,7 @@ customElements.define("select-native", class extends HTMLElement {
                     font-size: 1em;
                     background: white;
                     overflow: hidden;
+                    line-height: 1.3;
                 }
                 :host(:focus-within) {
                     border-color: black;
@@ -1207,7 +1208,7 @@ customElements.define("select-native", class extends HTMLElement {
                     border: none;
                     outline: none;
                     appearance: none;
-                    padding: 0 0.5em 0.1em 0.5em;
+                    padding: 0 0.5em 0 0.5em;
                     background: none;
                     font-size: 1em;
                     opacity: 0;
@@ -1249,12 +1250,12 @@ customElements.define("select-native", class extends HTMLElement {
                     pointer-events: none;
                     opacity: 0.75;
                     background: none;
-                    transform: scale(1.25, 0.8) rotate(0);
+                    transform: rotate(0) scale(0.8);
                     transition: 0.3s transform;
                 }
 
                 select:open + .l-icon {
-                    transform: scale(1.25, 0.8) rotate(180deg);
+                    transform: rotate(180deg) scale(0.8);
                     transition: 0.3s transform;
                 }
 
@@ -1266,7 +1267,11 @@ customElements.define("select-native", class extends HTMLElement {
                 }
             </style>
             <select id="selectInput" part="select"><slot></slot></select>
-            <div class="l-icon" part="icon">▼</div>
+            <div class="l-icon" part="icon">
+                <svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#000000" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8 316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/>
+                </svg>
+            </div>
             <div class="l-wrapper" part="wrapper">
                 <div id="label" class="l-label" part="label"></div>
             </div>
@@ -1396,6 +1401,7 @@ customElements.define("select-simple", class extends HTMLElement {
                     font-size: 1em;
                     background: white;
                     overflow: hidden;
+                    line-height: 1.3;
                 }
                 :host(:focus-within) {
                     border-color: black;
@@ -1405,7 +1411,7 @@ customElements.define("select-simple", class extends HTMLElement {
                     border: none;
                     outline: none;
                     appearance: none;
-                    padding: 0 1.75em 0.1em 0.5em;
+                    padding: 0 1.75em 0 0.5em;
                     background: none;
                     font-size: 1em;
                     position: absolute;
@@ -1448,13 +1454,13 @@ customElements.define("select-simple", class extends HTMLElement {
                     overflow: hidden;
                     opacity: 0.75;
                     background: none;
-                    transform: scale(1.25, 0.8) rotate(0);
+                    transform: rotate(0) scale(0.8);
                     transition: 0.3s transform;
                     cursor: pointer;
                 }
 
                 .l-icon.m-open {
-                    transform: scale(1.25, 0.8) rotate(180deg);
+                    transform: rotate(180deg) scale(0.8);
                     transition: 0.3s transform;
                 }
 
@@ -1475,10 +1481,14 @@ customElements.define("select-simple", class extends HTMLElement {
                     opacity: 0.5;
                 }
             </style>
-            <div id="icon" class="l-icon" part="icon">▼</div>
+            <div id="icon" class="l-icon" part="icon">
+                <svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#000000" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8 316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/>
+                </svg>
+            </div>
             <div class="l-wrapper" part="wrapper">
                 <input id="selectInput" part="select" placeholder="!" autocomplete="off">
-                <div id="label" class="l-label" part="label">12345</div>
+                <div id="label" class="l-label" part="label"></div>
             </div>
         `;
 

@@ -6,12 +6,12 @@
     padding: 0.5em 0.25em 0.5em 0.5em;
     color: black;
     user-select: none;
-    line-height: 1.2;
+    line-height: 1.3;
 }
 .select-simple-popup .l-scroller {
     width: 100%;
     height: 100%;
-    max-height: 10.4em;
+    max-height: 11em;
     overflow: auto;
     display: flex;
     flex-direction: column;
