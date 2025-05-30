@@ -1023,6 +1023,11 @@ customElements.define("checkbox-input", class extends HTMLElement {
         this.checkboxInput.focus();
     }
 
+    toggle(raiseEvent) {
+        this.value = !this.value;
+        if (raiseEvent) this._handleChangeEvent();
+    }
+
     get indeterminate() {
         return this.checkboxInput.indeterminate;
     }
@@ -1723,7 +1728,7 @@ customElements.define("select-multi", class extends HTMLElement {
                 }
             </style>
             <div class="l-wrapper" part="wrapper">
-                <checkbox-input id="toggle-all" part="toggle-all"></checkbox-input>
+                <checkbox-input id="toggle-all" part="toggle-all" tabindex="-1"></checkbox-input>
                 <input id="selectInput" part="search" autocomplete="off">
                 <div id="search-icon" part="search-icon">
                     <svg fill="#000000" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 485.104 485.104" xml:space="preserve">
@@ -1861,6 +1866,11 @@ customElements.define("select-multi", class extends HTMLElement {
                 evt.preventDefault();
                 this._activate(1);
                 break;
+            case "Enter":
+                if (this._focusedElement?.tagName === "CHECKBOX-INPUT") {
+                    this._focusedElement.toggle(true);
+                }
+                break;
         }
     }
 
@@ -1895,6 +1905,7 @@ customElements.define("select-multi", class extends HTMLElement {
                         ":after": (self) => {
                             if (focusOnItem === item) focusCheckbox = self;
                         },
+                        tabIndex: -1,
                         ":onfocus": (evt) => this._handleInputFocusEvent(evt),
                         ":onclick": (evt) => evt.stopPropagation(),
                         ":onchange": (evt) => this._handleChange(evt, evt.target.value, item, false),
