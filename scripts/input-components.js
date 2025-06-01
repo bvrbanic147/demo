@@ -908,6 +908,9 @@ customElements.define("date-input", class extends HTMLElement {
 });
 
 customElements.define("checkbox-input", class extends HTMLElement {
+    _readOnly = false;
+    _disabled = false;
+
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -1053,19 +1056,21 @@ customElements.define("checkbox-input", class extends HTMLElement {
     }
 
     get readOnly() {
-        return this.disabled;
+        return this._readOnly;
     }
 
     set readOnly(newValue) {
-        this.disabled = newValue;
+        this._readOnly = newValue
+        this.checkboxInput.disabled = this._readOnly || this._disabled;
     }
 
     get disabled() {
-        return this.checkboxInput.disabled;
+        return this._disabled;
     }
 
     set disabled(newValue) {
-        this.checkboxInput.disabled = newValue;
+        this._disabled = newValue;
+        this.checkboxInput.disabled = this._readOnly || this._disabled;
     }
 
     _handleChangeEvent() {
@@ -1074,6 +1079,9 @@ customElements.define("checkbox-input", class extends HTMLElement {
 });
 
 customElements.define("select-native", class extends HTMLElement {
+    _readOnly = false;
+    _disabled = false;
+
     constructor() {
         super();
         this.attachShadow({ mode: "open" });
@@ -1093,6 +1101,17 @@ customElements.define("select-native", class extends HTMLElement {
                 }
                 :host(:focus-within) {
                     border-color: black;
+                }
+                :host(.srm-read-only) {
+                    pointer-events: none;
+                }
+                :host(.srm-read-only) .l-icon {
+                    opacity: 0.25;
+                }
+                :host(.srm-disabled) {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    user-select: none;
                 }
 
                 select {
@@ -1149,13 +1168,6 @@ customElements.define("select-native", class extends HTMLElement {
                 select:open + .l-icon {
                     transform: rotate(180deg) scale(0.8);
                     transition: 0.3s transform;
-                }
-
-                select:disabled {
-                    cursor: not-allowed;
-                }
-                select:disabled + .l-icon {
-                    opacity: 0.5;
                 }
             </style>
             <select id="selectInput" part="select"><slot></slot></select>
@@ -1228,19 +1240,25 @@ customElements.define("select-native", class extends HTMLElement {
     }
 
     get readOnly() {
-        return this.disabled;
+        return this._readOnly;
     }
 
     set readOnly(newValue) {
-        this.disabled = newValue;
+        this._readOnly = newValue;
+        if (newValue) this.classList.add("srm-read-only")
+        else this.classList.remove("srm-read-only");
+        this.selectInput.readOnly = this._readOnly;
     }
 
     get disabled() {
-        return this.selectInput.disabled;
+        return this._disabled;
     }
 
     set disabled(newValue) {
-        this.selectInput.disabled = newValue;
+        this._disabled = newValue;
+        if (newValue) this.classList.add("srm-disabled")
+        else this.classList.remove("srm-disabled");
+        this.selectInput.disabled = this._disabled;
     }
 
     get options() {
@@ -1282,6 +1300,8 @@ customElements.define("select-simple", class extends HTMLElement {
     _options = [];
     _value = "";
     _popupListPosition = 0;
+    _readOnly = false;
+    _disabled = false;
 
     constructor() {
         super();
@@ -1302,6 +1322,17 @@ customElements.define("select-simple", class extends HTMLElement {
                 }
                 :host(:focus-within) {
                     border-color: black;
+                }
+                :host(.srm-read-only) {
+                    pointer-events: none;
+                }
+                :host(.srm-read-only) .l-icon {
+                    opacity: 0.25;
+                }
+                :host(.srm-disabled) {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    user-select: none;
                 }
 
                 input {
@@ -1369,13 +1400,6 @@ customElements.define("select-simple", class extends HTMLElement {
                 }
                 input:placeholder-shown {
                     opacity: 0;
-                }
-
-                input:disabled {
-                    cursor: not-allowed;
-                }
-                input:disabled + .l-icon {
-                    opacity: 0.5;
                 }
             </style>
             <div id="icon" class="l-icon" part="icon">
@@ -1472,19 +1496,25 @@ customElements.define("select-simple", class extends HTMLElement {
     }
 
     get readOnly() {
-        return this.disabled;
+        return this._readOnly;
     }
 
     set readOnly(newValue) {
-        this.disabled = newValue;
+        this._readOnly = newValue;
+        if (newValue) this.classList.add("srm-read-only")
+        else this.classList.remove("srm-read-only");
+        this.selectInput.readOnly = this._readOnly;
     }
 
     get disabled() {
-        return this.selectInput.disabled;
+        return this._disabled;
     }
 
     set disabled(newValue) {
-        this.selectInput.disabled = newValue;
+        this._disabled = newValue;
+        if (newValue) this.classList.add("srm-disabled")
+        else this.classList.remove("srm-disabled");
+        this.selectInput.disabled = this._disabled;
     }
 
     get options() {
@@ -1637,6 +1667,8 @@ customElements.define("select-simple", class extends HTMLElement {
 customElements.define("select-multi", class extends HTMLElement {
     _options = [];
     _value = [];
+    _readOnly = false;
+    _disabled = false;
 
     constructor() {
         super();
@@ -1658,6 +1690,18 @@ customElements.define("select-multi", class extends HTMLElement {
                 }
                 :host(:focus-within) {
                     border-color: black;
+                }
+                :host(.srm-read-only) checkbox-input {
+                    opacity: 0.5;
+                }
+                :host(.srm-read-only) checkbox-input,
+                :host(.srm-read-only) #values > * {
+                    pointer-events: none;
+                }
+                :host(.srm-disabled) {
+                    opacity: 0.5;
+                    pointer-events: none;
+                    user-select: none;
                 }
 
                 checkbox-input {
@@ -1799,19 +1843,26 @@ customElements.define("select-multi", class extends HTMLElement {
     }
 
     get readOnly() {
-        return this.disabled;
+        return this._readOnly;
     }
 
     set readOnly(newValue) {
-        this.disabled = newValue;
+        this._readOnly = newValue;
+        if (newValue) this.classList.add("srm-read-only")
+        else this.classList.remove("srm-read-only");
+        this._updateValues();
     }
 
     get disabled() {
-        return this.selectInput.disabled;
+        return this._disabled;
     }
 
     set disabled(newValue) {
-        this.selectInput.disabled = newValue;
+        this._disabled = newValue;
+        if (newValue) this.classList.add("srm-disabled")
+        else this.classList.remove("srm-disabled");
+        this.selectInput.disabled = this._disabled;
+        this._updateValues();
     }
 
     get options() {
@@ -1844,6 +1895,7 @@ customElements.define("select-multi", class extends HTMLElement {
     }
 
     _activate(direction) {
+        if (this._readOnly || this._disabled) return;
         const list = Array.from(this.shadowRoot.querySelectorAll("input, checkbox-input"));
         const current = list.indexOf(this._focusedElement);
         let next = 0;
@@ -1857,6 +1909,7 @@ customElements.define("select-multi", class extends HTMLElement {
     }
 
     _handleShadowKeyDown(evt) {
+        if (this._readOnly || this._disabled) return;
         switch (evt.key) {
             case "ArrowUp":
                 evt.preventDefault();
@@ -1909,6 +1962,8 @@ customElements.define("select-multi", class extends HTMLElement {
                         ":onfocus": (evt) => this._handleInputFocusEvent(evt),
                         ":onclick": (evt) => evt.stopPropagation(),
                         ":onchange": (evt) => this._handleChange(evt, evt.target.value, item, false),
+                        readOnly: this._readOnly,
+                        disabled: this._disabled,
                     },
                     "div", {
                         innerHTML: item.html ?? htmlEscape(item.label || "\u00a0"),
@@ -1922,6 +1977,8 @@ customElements.define("select-multi", class extends HTMLElement {
 
     _updateToggleAll() {
         const countSelected = this._options.filter(x => this._value.includes(x.value));
+        this.toggleAll.readOnly = this._readOnly;
+        this.toggleAll.disabled = this._disabled;
         if (countSelected.length === 0) {
             this.toggleAll.checked = false;
             this.toggleAll.indeterminate = false;
