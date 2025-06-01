@@ -1302,6 +1302,7 @@ customElements.define("select-simple", class extends HTMLElement {
     _popupListPosition = 0;
     _readOnly = false;
     _disabled = false;
+    _freeInput = false;
 
     constructor() {
         super();
@@ -1398,7 +1399,7 @@ customElements.define("select-simple", class extends HTMLElement {
                 input:not(:placeholder-shown) + .l-label {
                     opacity: 0;
                 }
-                input:placeholder-shown {
+                input:not(.l-free-input):placeholder-shown {
                     opacity: 0;
                 }
             </style>
@@ -1419,6 +1420,7 @@ customElements.define("select-simple", class extends HTMLElement {
 
         this.selectInput.addEventListener("keydown", this._handleKeyEvent.bind(this));
         this.selectInput.addEventListener("input", this._handleInputEvent.bind(this));
+        this.selectInput.addEventListener("focus", this._handleFocusEvent.bind(this));
         this.selectInput.addEventListener("blur", this._handleBlurEvent.bind(this));
         this.iconElement.addEventListener("click", this._handleIconClickEvent.bind(this));
         this.onclick = () => {
@@ -1428,7 +1430,7 @@ customElements.define("select-simple", class extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["readonly", "disabled", "options", "value", "popupwidth", "popupposition", "popupalign"];
+        return ["readonly", "disabled", "options", "value", "popupwidth", "popupposition", "popupalign", "freeinput"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -1454,6 +1456,9 @@ customElements.define("select-simple", class extends HTMLElement {
                 break;
             case "popupalign":
                 this.popupAlign = newValue;
+                break;
+            case "freeinput":
+                this.freeInput = newValue !== "false" && newValue !== null;
                 break;
         }
     }
@@ -1493,6 +1498,16 @@ customElements.define("select-simple", class extends HTMLElement {
 
     set popupAlign(newValue) {
         this._popupAlign = newValue;
+    }
+
+    get freeInput() {
+        return this._freeInput;
+    }
+
+    set freeInput(newValue) {
+        this._freeInput = newValue;
+        if (this._freeInput) this.selectInput.classList.add("l-free-input");
+        else this.selectInput.classList.remove("l-free-input");
     }
 
     get readOnly() {
@@ -1547,6 +1562,11 @@ customElements.define("select-simple", class extends HTMLElement {
     }
 
     _updateLabel() {
+        if (this._freeInput) {
+            this.selectLabel.innerText = this._value || "\u00a0";
+            this.title = this.selectLabel.innerText;
+            return;
+        }
         const option = this._options.find(x => x.value === this._value);
         this.selectLabel.innerText = option?.label || "\u00a0";
         this.title = this.selectLabel.innerText;
@@ -1568,11 +1588,17 @@ customElements.define("select-simple", class extends HTMLElement {
                 evt.preventDefault();
                 break;
             case "Enter":
-                if (this._popupItem) this._selectValue(this._popupItem.value);
+                if (this._freeInput) {
+                    const popupState = !!this._popup;
+                    this._selectValue(this._popupItem ? this._popupItem.value : this.selectInput.value, true);
+                    this.selectInput.select();
+                    if (!popupState) this._drawPopup("");
+                }
+                else if (this._popupItem) this._selectValue(this._popupItem.value, true);
                 else this._drawPopup("");
                 break;
             case " ":
-                if (!this._popupItem) {
+                if (!this._popupItem && this.selectInput.value === "") {
                     evt.preventDefault();
                     this._drawPopup("");
                 }
@@ -1580,11 +1606,12 @@ customElements.define("select-simple", class extends HTMLElement {
         }
     }
 
-    _selectValue(value) {
+    _selectValue(value, closePopup) {
         if (this._value === value) return;
         this._value = value;
+        if (this._freeInput) this.selectInput.value = value;
         this._updateLabel();
-        this._closePopup();
+        if (closePopup) this._closePopup();
         this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
     }
 
@@ -1594,7 +1621,8 @@ customElements.define("select-simple", class extends HTMLElement {
 
         if (direction === "") {
             const index = list.findIndex(x => x.value === this._value);
-            if (index >= 0) this._popupListPosition = index;
+            this._popupListPosition = Math.max(0, index);
+            if (this._freeInput)  this._popupListPosition = -1;
         }
         else if (direction === 0) this._popupListPosition = 0;
         else {
@@ -1620,7 +1648,7 @@ customElements.define("select-simple", class extends HTMLElement {
                 ":tag": "div",
                 className: (itemIndex === this._popupListPosition ? "l-focus" : "") + (item.value === this._value ? " l-active" : ""),
                 innerHTML: item.html ?? htmlEscape(item.label || "\u00a0"),
-                ":onclick": () => this._selectValue(item.value),
+                ":onclick": () => this._selectValue(item.value, true),
             }, null, scroller);
         });
 
@@ -1635,8 +1663,11 @@ customElements.define("select-simple", class extends HTMLElement {
     }
 
     _handleInputEvent() {
-        this._drawPopup(0);
+        this._drawPopup(this._freeInput ? "" : 0);
         this.selectLabel.innerText = this.selectInput.value.trim() || "\u00a0";
+        if (this._freeInput) {
+            this._selectValue(this.selectInput.value, false);
+        }
     }
 
     _handleIconClickEvent() {
@@ -1645,7 +1676,7 @@ customElements.define("select-simple", class extends HTMLElement {
 
     _closePopup() {
         this.iconElement.classList.remove("m-open");
-        this.selectInput.value = "";
+        if (!this._freeInput) this.selectInput.value = "";
         this._popup?.close();
         this._popup = null;
         this._popupContainer = null;
@@ -1660,6 +1691,13 @@ customElements.define("select-simple", class extends HTMLElement {
             setTimeout(() => {
                 if (storedPopupCounter === this._popupCounter) this._closePopup();
             }, 250);
+        }
+    }
+
+    _handleFocusEvent(evt) {
+        if (this._freeInput) {
+            this.selectInput.value = this.value;
+            this.selectInput.select();
         }
     }
 });
