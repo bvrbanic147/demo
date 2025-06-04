@@ -9,7 +9,7 @@
             - can be used to define attributes and children (should have space (" ") after tag or ">")
             - if string ends with ">" no closing tag will be added
         - object - properties of a previous element
-            - if ":tag:" property is defined, creates an element with this tag type (doesn't use the previous tag, previous becomes this element)
+            - if ":tag" property is defined, creates an element with this tag type (doesn't use the previous tag, previous becomes this element)
             - ":children" tag is defined (and it is an array) => "inline" children definition
             - event handlers are attached with ":onxxx" rule (note ":on") so the function is not resolved
             - attributes can be used like "attr:style": "display: none; color: white"

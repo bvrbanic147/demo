@@ -108,7 +108,7 @@
     background-color: #ffffff;
     opacity: 1;
 }
-    .date-picker table td.l-weekend {
+.date-picker table td.l-weekend {
     background-color: #e0e0e0;
 }
 .date-picker table td.l-today:after {
