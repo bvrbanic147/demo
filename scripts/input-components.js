@@ -80,7 +80,7 @@ customElements.define("number-input", class extends HTMLElement {
         this.numberInput.addEventListener("change", this._handleChangeEvent.bind(this));
         this.numberInput.addEventListener("input", this._handleInputEvent.bind(this));
 
-        this.onclick = () => this.numberInput.focus();
+        this.addEventListener("click", () => this.numberInput.focus());
     }
 
     static get observedAttributes() {
@@ -373,7 +373,7 @@ customElements.define("date-input", class extends HTMLElement {
         this.dateInput.addEventListener("change", this._handleChangeEvent.bind(this));
         this.dateInput.addEventListener("input", this._handleInputEvent.bind(this));
 
-        this.onclick = () => this.dateInput.focus();
+        this.addEventListener("click", () => this.dateInput.focus());
     }
 
     static get observedAttributes() {
@@ -1423,10 +1423,10 @@ customElements.define("select-simple", class extends HTMLElement {
         this.selectInput.addEventListener("focus", this._handleFocusEvent.bind(this));
         this.selectInput.addEventListener("blur", this._handleBlurEvent.bind(this));
         this.iconElement.addEventListener("click", this._handleIconClickEvent.bind(this));
-        this.onclick = () => {
+        this.addEventListener("click", () => {
             this.selectInput.focus();
             this._drawPopup("");
-        };
+        });
     }
 
     static get observedAttributes() {
@@ -1841,8 +1841,8 @@ customElements.define("select-multi", class extends HTMLElement {
         this.toggleAll.addEventListener("focus", this._handleInputFocusEvent.bind(this));
         this.toggleAll.addEventListener("change", this._handleToggleAllChangeEvent.bind(this));
         this.toggleAll.addEventListener("click", (evt) => evt.stopPropagation());
-        this.onkeydown = (evt) => this._handleShadowKeyDown(evt);
-        this.onclick = (evt) => this.selectInput.focus();
+        this.addEventListener("keydown", (evt) => this._handleShadowKeyDown(evt));
+        this.addEventListener("click", (evt) => this.selectInput.focus());
     }
 
     static get observedAttributes() {
