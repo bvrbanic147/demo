@@ -30,15 +30,18 @@ customElements.define("number-input", class extends HTMLElement {
                     color: #333;
                     cursor: pointer;
                     outline: none;
-                    min-width: 1.5em;
+                    width: 1.75em;
                     text-align: center;
                     user-select: none;
                     font-size: 1em;
                     font-family: inherit;
+                    border-radius: 0.25em;
+                    transition: 0.2s background-color;
                 }
 
                 button:hover {
                     background-color: #ddd;
+                    transition: 0.2s background-color;
                 }
 
                 button.m-cannot-click {
@@ -64,6 +67,7 @@ customElements.define("number-input", class extends HTMLElement {
                     background: none;
                     font-family: inherit;
                     text-align: inherit;
+                    height: 1.3em;
                 }
             </style>
             <button id="decrement" tabindex="-1" part="dec-button">-</button>
@@ -328,7 +332,7 @@ customElements.define("date-input", class extends HTMLElement {
                     color: #333;
                     cursor: pointer;
                     outline: none;
-                    min-width: 1.5em;
+                    width: 1.75em;
                     text-align: center;
                     user-select: none;
                     font-size: 1em;
@@ -337,13 +341,17 @@ customElements.define("date-input", class extends HTMLElement {
                     align-items: center;
                     overflow: hidden;
                     font-family: inherit;
+                    height: 1.3em;
+                    border-radius: 0.25em;
+                    transition: 0.2s background-color;
                 }
                 button > div {
-                    transform: translateY(0.05em) scale(0.9);
+                    transform: scale(0.9);
                 }
 
                 button:hover {
                     background-color: #ddd;
+                    transition: 0.2s background-color;
                 }
 
                 button.m-cannot-click {
@@ -360,6 +368,7 @@ customElements.define("date-input", class extends HTMLElement {
                     background: none;
                     font-family: inherit;
                     text-align: inherit;
+                    height: 1.3em;
                 }
             </style>
             <input type="text" id="dateInput" value="" part="input" autocomplete="off">
@@ -1145,14 +1154,16 @@ customElements.define("select-native", class extends HTMLElement {
                     position: relative;
                     width: 100%;
                     pointer-events: none;
+                    height: 1.3em;
                 }
 
                 .l-icon {
                     position: absolute;
                     user-select: none;
-                    top: 0;
+                    top: calc(50% - 0.65em);
+                    height: 1.3em;
+                    border-radius: 50%;
                     right: 0.33em;
-                    bottom: 0;
                     width: 1.25em;
                     display: flex;
                     justify-content: center;
@@ -1373,9 +1384,10 @@ customElements.define("select-simple", class extends HTMLElement {
                 .l-icon {
                     position: absolute;
                     user-select: none;
-                    top: 0;
+                    top: calc(50% - 0.65em);
+                    height: 1.3em;
+                    border-radius: 50%;
                     right: 0.33em;
-                    bottom: 0;
                     width: 1.25em;
                     display: flex;
                     justify-content: center;
