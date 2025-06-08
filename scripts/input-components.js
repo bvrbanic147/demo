@@ -706,6 +706,7 @@ customElements.define("date-input", class extends HTMLElement {
             selectButton: null,
         };
         data.dow = data.weekTable.map(x => data.dowText[x]);
+        data.am = data.formatRaw.formatRaw.includes("A");
 
         const renderDateTable = (elem) => {
             data.dateTableContainer = elem;
@@ -771,13 +772,24 @@ customElements.define("date-input", class extends HTMLElement {
             ], data, elem);
         };
 
-        const handleTimeClick = (index, value) => {
+        const handleTimeClick = (index, value, amValues) => {
             const check = [2, 9, 5, 9, 5, 9];
             if (value > check[index]) return;
             const mapping = [0, 1, 3, 4, 6, 7];
             const max = [23, 59, 59];
-            const temp = data.selectedTime.slice(0, mapping[index]) + value + data.selectedTime.slice(mapping[index] + 1);
-            const parts = temp.split(":").map((x, index) => Math.min(max[index], parseInt(x)));
+            let parts = [];
+            if (amValues) {
+                const temp = data.selectedTime;
+                parts = temp.split(":").map((x, index) => Math.min(max[index], parseInt(x)));
+                let [setHour, setAm, selectedItem] = amValues;
+                if (typeof selectedItem === "number") setHour = selectedItem;
+                else if (["AM", "PM"].includes(selectedItem)) setAm = selectedItem;
+                parts[0] = (setHour === 12 ? 0 : setHour) + (setAm === "AM" ? 0 : 12);
+            }
+            else {
+                const temp = data.selectedTime.slice(0, mapping[index]) + value + data.selectedTime.slice(mapping[index] + 1);
+                parts = temp.split(":").map((x, index) => Math.min(max[index], parseInt(x)));
+            }
             data.selectedTime = parts.map(x => x.toString().padStart(2, "0")).join(":");
             renderTimeTable(data.timeTableContainer);
         };
@@ -787,6 +799,13 @@ customElements.define("date-input", class extends HTMLElement {
             elem.innerHTML = "";
             const selectedTime = data.selectedTime;
             const mapping = [0, 1, 3, 4, 6, 7];
+            const hourC1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            const hourC2 = [11, 12, "", "", "", "", "", "", "AM", "PM"];
+            const hourNumber = parseInt(selectedTime.slice(0, 2));
+            const amSelected = hourNumber >= 12 ? "PM" : "AM";
+            const amHourTemp = amSelected === "PM" ? hourNumber - 12 : hourNumber;
+            const amHour = amHourTemp === 0 ? 12 : amHourTemp;
+            const amCheck = [amSelected, amHour];
             return buildTree([
                 "div class='l-value-display'", { textContent: this._formatDate(data.selectedTime, this.type === "time-hm" ? "time-hm" : "time") },
                 "table", [
@@ -804,8 +823,16 @@ customElements.define("date-input", class extends HTMLElement {
                     "tbody", new Array(10).fill(0).map((_, index) => ({
                         ":tag": "tr",
                         ":children": [
-                            { ":tag": "td", textContent: index <= 2 ? index : "", className: selectedTime[mapping[0]] == index ? "l-selected" : "", ":onclick": () => handleTimeClick(0, index) },
-                            { ":tag": "td", textContent: index, className: selectedTime[mapping[1]] == index ? "l-selected" : "", ":onclick": () => handleTimeClick(1, index) },
+                            ...(data.am
+                                ? [
+                                    { ":tag": "td", textContent: hourC1[index], className: amCheck.includes(hourC1[index]) ? "l-selected" : "", ":onclick": () => handleTimeClick(0, 0, [amHour, amSelected, hourC1[index]]) },
+                                    { ":tag": "td", textContent: hourC2[index], className: amCheck.includes(hourC2[index]) ? "l-selected" : "", ":onclick": () => handleTimeClick(0, 0, [amHour, amSelected, hourC2[index]]) },
+                                ]
+                                : [
+                                    { ":tag": "td", textContent: index <= 2 ? index : "", className: selectedTime[mapping[0]] == index ? "l-selected" : "", ":onclick": () => handleTimeClick(0, index) },
+                                    { ":tag": "td", textContent: index, className: selectedTime[mapping[1]] == index ? "l-selected" : "", ":onclick": () => handleTimeClick(1, index) },
+                                ]
+                            ),
                             "td class='l-div'",
                             { ":tag": "td", textContent: index <= 5 ? index : "", className: selectedTime[mapping[2]] == index ? "l-selected" : "", ":onclick": () => handleTimeClick(2, index) },
                             { ":tag": "td", textContent: index, className: selectedTime[mapping[3]] == index ? "l-selected" : "", ":onclick": () => handleTimeClick(3, index) },
