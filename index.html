@@ -119,7 +119,7 @@ document.body.appendChild(
 <select-native options='[[""],[1],[2, "Text #2"],[3, "long text #3"]]' value="3" onchange="console.log(event.target.value, event)"></select-native>
 <select-simple options='[[null, ""],[1],["2", "Text #2"],["3", "long text #3"],[true, "true", "&gt; true [✔] &lt;"],[false]]' value="3" popupwidth="200px" popupposition="top" popupalign="center" onchange="console.log({value: event.target.value, event})"></select-simple>
 <select-multi options='[[null, ""],[1],["2", "Text #2"],["3", "long text #3"],[true, "true", "&gt; true [✔] &lt;"],[false]]' value="[]" onchange="console.log({value: event.target.value, event})" style="height: 10em"></select-multi>
-<select-simple options='["null","1","Text #2","long text #3","four","true","false"]' freeinput value="3" popupwidth="200px" popupposition="top" popupalign="center" onchange="console.log({value: event.target.value, event})"></select-simple>
+<select-simple options='["null","1","Text #2","long text #3","four","five","true","false"]' freeinput value="3" popupwidth="200px" popupposition="top" popupalign="center" onchange="console.log({value: event.target.value, event})"></select-simple>
 <password-input onchange="console.log('password-input', event)" oninput="console.log('password-input', event)" ></password-input>
 <action-input onchange="console.log('action-input', event)" oninput="console.log('action-input', event)"></action-input>
 </body>
