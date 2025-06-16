@@ -1,3 +1,37 @@
+const inputConfig = {
+    svg: {
+        checkMark: `<svg fill="#000000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 45.701 45.7" xml:space="preserve">
+            <g>
+                <g>
+                    <path d="M20.687,38.332c-2.072,2.072-5.434,2.072-7.505,0L1.554,26.704c-2.072-2.071-2.072-5.433,0-7.504
+                        c2.071-2.072,5.433-2.072,7.505,0l6.928,6.927c0.523,0.522,1.372,0.522,1.896,0L36.642,7.368c2.071-2.072,5.433-2.072,7.505,0
+                        c0.995,0.995,1.554,2.345,1.554,3.752c0,1.407-0.559,2.757-1.554,3.752L20.687,38.332z"/>
+                </g>
+            </g>
+        </svg>`,
+        indeterminateMark: `<svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3,18V6A2,2,0,0,1,5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5A2,2,0,0,1,3,18Z"/>
+        </svg>`,
+        selectMark: `<svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#000000" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8 316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/>
+        </svg>`,
+        search: `<svg fill="#000000" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 485.104 485.104" xml:space="preserve">
+            <g>
+                <path d="M110.028,115.171c-4.76-4.767-12.483-4.752-17.227,0c-32.314,32.33-32.314,84.898-0.016,117.197
+                    c2.38,2.379,5.487,3.569,8.614,3.569c3.123,0,6.234-1.19,8.613-3.569c4.76-4.76,4.76-12.469,0-17.228
+                    c-22.795-22.803-22.795-59.923,0.016-82.742C114.788,127.64,114.788,119.923,110.028,115.171z"/>
+                <path d="M471.481,405.861L324.842,259.23c37.405-66.25,28.109-151.948-28.217-208.317C263.787,18.075,220.133,0,173.718,0
+                    C127.287,0,83.633,18.075,50.81,50.913c-67.717,67.74-67.701,177.979,0.02,245.738c32.85,32.823,76.488,50.897,122.919,50.897
+                    c30.489,0,59.708-7.939,85.518-22.595L405.824,471.51c18.113,18.121,47.493,18.129,65.641,0
+                    c8.706-8.71,13.593-20.512,13.608-32.823C485.073,426.37,480.171,414.567,471.481,405.861z M85.28,262.191
+                    c-48.729-48.756-48.729-128.079-0.016-176.828c23.62-23.627,55.029-36.634,88.453-36.634c33.407,0,64.816,13.007,88.451,36.627
+                    c48.715,48.756,48.699,128.094-0.015,176.85c-23.62,23.612-55.014,36.612-88.406,36.612
+                    C140.341,298.818,108.919,285.811,85.28,262.191z"/>
+            </g>
+        </svg>`,
+    },
+};
+
 customElements.define("number-input", class extends HTMLElement {
     _precision = 2;
     _allowNull = false;
@@ -13,7 +47,7 @@ customElements.define("number-input", class extends HTMLElement {
             <style>
                 :host {
                     display: inline-flex;
-                    border: 1px solid #ccc;
+                    border: var(--input--border, 1px solid #ccc);
                     overflow: hidden;
                     width: 12em;
                     min-height: 1.5em;
@@ -21,13 +55,13 @@ customElements.define("number-input", class extends HTMLElement {
                     background: white;
                 }
                 :host(:focus-within) {
-                    border-color: black;
+                    border-color: var(--input--border-color-focused, black);
                 }
 
                 button {
                     border: none;
-                    background-color: #eee;
-                    color: #333;
+                    background-color: var(--input--button-background-color, #eee);
+                    color: var(--input--button-color, #333);
                     cursor: pointer;
                     outline: none;
                     width: 1.75em;
@@ -36,12 +70,13 @@ customElements.define("number-input", class extends HTMLElement {
                     font-size: 1em;
                     font-family: inherit;
                     border-radius: 0.25em;
-                    transition: 0.2s background-color;
+                    transition: 0.2s background-color, 0.2s color;
                 }
 
                 button:hover {
-                    background-color: #ddd;
-                    transition: 0.2s background-color;
+                    background-color: var(--input--button-background-color-hovered, #ddd);
+                    color: var(--input--button-color-hovered, black);
+                    transition: 0.2s background-color, 0.2s color;
                 }
 
                 button.m-cannot-click {
@@ -315,7 +350,7 @@ customElements.define("date-input", class extends HTMLElement {
             <style>
                 :host {
                     display: inline-flex;
-                    border: 1px solid #ccc;
+                    border: var(--input--border, 1px solid #ccc);
                     overflow: hidden;
                     width: 15em;
                     min-height: 1.5em;
@@ -323,13 +358,13 @@ customElements.define("date-input", class extends HTMLElement {
                     background: white;
                 }
                 :host(:focus-within) {
-                    border-color: black;
+                    border-color: var(--input--border-color-focused, black);
                 }
 
                 button {
                     border: none;
                     background: none;
-                    color: #333;
+                    color: var(--input--button-color, #333);
                     cursor: pointer;
                     outline: none;
                     width: 1.75em;
@@ -343,15 +378,16 @@ customElements.define("date-input", class extends HTMLElement {
                     font-family: inherit;
                     height: 1.3em;
                     border-radius: 0.25em;
-                    transition: 0.2s background-color;
+                    transition: 0.2s background-color, 0.2s color;
                 }
                 button > div {
                     transform: scale(0.9);
                 }
 
                 button:hover {
-                    background-color: #ddd;
-                    transition: 0.2s background-color;
+                    background-color: var(--input--button-background-color-hovered, #ddd);
+                    color: var(--input--button-color-hovered, black);
+                    transition: 0.2s background-color, 0.2s color;
                 }
 
                 button.m-cannot-click {
@@ -954,7 +990,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
             <style>
                 :host {
                     display: inline-flex;
-                    border: 1px solid #ccc;
+                    border: var(--input--border, 1px solid #ccc);
                     overflow: hidden;
                     width: 1.5em;
                     height: 1.5em;
@@ -964,7 +1000,7 @@ customElements.define("checkbox-input", class extends HTMLElement {
                     background: white;
                 }
                 :host(:focus-within) {
-                    border-color: black;
+                    border-color: var(--input--border-color-focused, black);
                 }
 
                 input {
@@ -1016,18 +1052,8 @@ customElements.define("checkbox-input", class extends HTMLElement {
             </style>
             <input type="checkbox" id="checkboxInput" part="input" autocomplete="off">
             <div class="l-checked-render">
-                <svg fill="#000000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 45.701 45.7" xml:space="preserve">
-                    <g>
-                        <g>
-                            <path d="M20.687,38.332c-2.072,2.072-5.434,2.072-7.505,0L1.554,26.704c-2.072-2.071-2.072-5.433,0-7.504
-                                c2.071-2.072,5.433-2.072,7.505,0l6.928,6.927c0.523,0.522,1.372,0.522,1.896,0L36.642,7.368c2.071-2.072,5.433-2.072,7.505,0
-                                c0.995,0.995,1.554,2.345,1.554,3.752c0,1.407-0.559,2.757-1.554,3.752L20.687,38.332z"/>
-                        </g>
-                    </g>
-                </svg>
-                <svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3,18V6A2,2,0,0,1,5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5A2,2,0,0,1,3,18Z"/>
-                </svg>
+                ${inputConfig.svg.checkMark}
+                ${inputConfig.svg.indeterminateMark}
             </div>
         `;
 
@@ -1125,7 +1151,7 @@ customElements.define("select-native", class extends HTMLElement {
             <style>
                 :host {
                     display: inline-flex;
-                    border: 1px solid #ccc;
+                    border: var(--input--border, 1px solid #ccc);
                     min-width: 2em;
                     max-width: 100%;
                     min-height: 1.5em;
@@ -1136,7 +1162,7 @@ customElements.define("select-native", class extends HTMLElement {
                     line-height: 1.3;
                 }
                 :host(:focus-within) {
-                    border-color: black;
+                    border-color: var(--input--border-color-focused, black);
                 }
                 :host(.srm-read-only) {
                     pointer-events: none;
@@ -1210,9 +1236,7 @@ customElements.define("select-native", class extends HTMLElement {
             </style>
             <select id="selectInput" part="select"><slot></slot></select>
             <div class="l-icon" part="icon">
-                <svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#000000" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8 316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/>
-                </svg>
+                ${selectMark}
             </div>
             <div class="l-wrapper" part="wrapper">
                 <div id="label" class="l-label" part="label"></div>
@@ -1349,7 +1373,7 @@ customElements.define("select-simple", class extends HTMLElement {
             <style>
                 :host {
                     display: inline-flex;
-                    border: 1px solid #ccc;
+                    border: var(--input--border, 1px solid #ccc);
                     min-width: 2em;
                     max-width: 100%;
                     min-height: 1.5em;
@@ -1360,7 +1384,7 @@ customElements.define("select-simple", class extends HTMLElement {
                     line-height: 1.3;
                 }
                 :host(:focus-within) {
-                    border-color: black;
+                    border-color: var(--input--border-color-focused, black);
                 }
                 :host(.srm-read-only) {
                     pointer-events: none;
@@ -1443,9 +1467,7 @@ customElements.define("select-simple", class extends HTMLElement {
                 }
             </style>
             <div id="icon" class="l-icon" part="icon">
-                <svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#000000" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8 316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/>
-                </svg>
+                ${inputConfig.svg.selectMark}
             </div>
             <div class="l-wrapper" part="wrapper">
                 <input id="selectInput" part="select" placeholder="!" autocomplete="off">
@@ -1754,7 +1776,7 @@ customElements.define("select-multi", class extends HTMLElement {
             <style>
                 :host {
                     display: inline-flex;
-                    border: 1px solid #ccc;
+                    border: var(--input--border, 1px solid #ccc);
                     min-width: 2em;
                     max-width: 100%;
                     min-height: 1.5em;
@@ -1766,7 +1788,7 @@ customElements.define("select-multi", class extends HTMLElement {
                     flex-direction: column;
                 }
                 :host(:focus-within) {
-                    border-color: black;
+                    border-color: var(--input--border-color-focused, black);
                 }
                 :host(.srm-read-only) checkbox-input {
                     opacity: 0.5;
@@ -1804,14 +1826,14 @@ customElements.define("select-multi", class extends HTMLElement {
 
                 #values {
                     margin-top: 0.5em;
-                    border-top: 1px solid #ccc;
+                    border-top: var(--input--border, 1px solid #ccc);
                     padding-top: 0.5em;
                     width: 100%;
                     height: 100%;
                     overflow: auto;
                 }
                 :host(:focus-within) #values {
-                    border-color: black;
+                    border-color: var(--input--border-color-focused, black);
                 }
 
                 #values span {
@@ -1822,10 +1844,12 @@ customElements.define("select-multi", class extends HTMLElement {
                     cursor: pointer;
                 }
                 #values span:hover {
-                    background: #e0e0e0;
+                    background-color: var(--input--select-multi-background-color-hovered, #e0e0e0);
+                    color: var(--input--select-multi-color-hovered, black);
                 }
                 #values span:focus-within {
-                    background: #c0c0c0;
+                    background: var(--input--select-multi-background-color-focused, #c0c0c0);
+                    color: var(--input--select-multi-color-focused, black);
                 }
 
                 input::placeholder {
@@ -1852,20 +1876,7 @@ customElements.define("select-multi", class extends HTMLElement {
                 <checkbox-input id="toggle-all" part="toggle-all" tabindex="-1"></checkbox-input>
                 <input id="selectInput" part="search" autocomplete="off">
                 <div id="search-icon" part="search-icon">
-                    <svg fill="#000000" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 485.104 485.104" xml:space="preserve">
-                        <g>
-                            <path d="M110.028,115.171c-4.76-4.767-12.483-4.752-17.227,0c-32.314,32.33-32.314,84.898-0.016,117.197
-                                c2.38,2.379,5.487,3.569,8.614,3.569c3.123,0,6.234-1.19,8.613-3.569c4.76-4.76,4.76-12.469,0-17.228
-                                c-22.795-22.803-22.795-59.923,0.016-82.742C114.788,127.64,114.788,119.923,110.028,115.171z"/>
-                            <path d="M471.481,405.861L324.842,259.23c37.405-66.25,28.109-151.948-28.217-208.317C263.787,18.075,220.133,0,173.718,0
-                                C127.287,0,83.633,18.075,50.81,50.913c-67.717,67.74-67.701,177.979,0.02,245.738c32.85,32.823,76.488,50.897,122.919,50.897
-                                c30.489,0,59.708-7.939,85.518-22.595L405.824,471.51c18.113,18.121,47.493,18.129,65.641,0
-                                c8.706-8.71,13.593-20.512,13.608-32.823C485.073,426.37,480.171,414.567,471.481,405.861z M85.28,262.191
-                                c-48.729-48.756-48.729-128.079-0.016-176.828c23.62-23.627,55.029-36.634,88.453-36.634c33.407,0,64.816,13.007,88.451,36.627
-                                c48.715,48.756,48.699,128.094-0.015,176.85c-23.62,23.612-55.014,36.612-88.406,36.612
-                                C140.341,298.818,108.919,285.811,85.28,262.191z"/>
-                        </g>
-                    </svg>
+                    ${inputConfig.svg.search}
                 </div>
             </div>
             <div id="values" part="values"></div>
