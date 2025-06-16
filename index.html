@@ -15,6 +15,7 @@
     --input--border: 1px solid #e0e0e0;
     --input--border-color-focused: #808080;
     --input--button-background-color: #e0e0e0;
+    --input--button-icon-background-color: none;
     --input--button-color: black;
     --input--button-background-color-hovered: #c0c0c0;
     --input--button-color-hovered: black;
@@ -37,7 +38,7 @@ input, textarea {
 input:focus, textarea:focus {
     border-color: var(--input--border-color-focused, #000);
 }
-number-input, date-input, select-native, select-simple, select-multi, input, textarea {
+number-input, date-input, select-native, select-simple, select-multi, password-input, action-input, input, textarea {
     padding: 0.5em;
     border-radius: 0.5em;
 }
@@ -119,5 +120,7 @@ document.body.appendChild(
 <select-simple options='[[null, ""],[1],["2", "Text #2"],["3", "long text #3"],[true, "true", "&gt; true [✔] &lt;"],[false]]' value="3" popupwidth="200px" popupposition="top" popupalign="center" onchange="console.log({value: event.target.value, event})"></select-simple>
 <select-multi options='[[null, ""],[1],["2", "Text #2"],["3", "long text #3"],[true, "true", "&gt; true [✔] &lt;"],[false]]' value="[]" onchange="console.log({value: event.target.value, event})" style="height: 10em"></select-multi>
 <select-simple options='["null","1","Text #2","long text #3","four","true","false"]' freeinput value="3" popupwidth="200px" popupposition="top" popupalign="center" onchange="console.log({value: event.target.value, event})"></select-simple>
+<password-input onchange="console.log('password-input', event)" oninput="console.log('password-input', event)" ></password-input>
+<action-input onchange="console.log('action-input', event)" oninput="console.log('action-input', event)"></action-input>
 </body>
 </html>

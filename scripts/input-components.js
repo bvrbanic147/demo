@@ -1,6 +1,6 @@
 const inputConfig = {
     svg: {
-        checkMark: `<svg fill="#000000" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 45.701 45.7" xml:space="preserve">
+        checkMark: `<svg fill="currentColor" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 45.701 45.7" xml:space="preserve">
             <g>
                 <g>
                     <path d="M20.687,38.332c-2.072,2.072-5.434,2.072-7.505,0L1.554,26.704c-2.072-2.071-2.072-5.433,0-7.504
@@ -9,13 +9,13 @@ const inputConfig = {
                 </g>
             </g>
         </svg>`,
-        indeterminateMark: `<svg fill="#000000" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        indeterminateMark: `<svg fill="currentColor" width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M3,18V6A2,2,0,0,1,5,4H19a2,2,0,0,1,2,2V18a2,2,0,0,1-2,2H5A2,2,0,0,1,3,18Z"/>
         </svg>`,
         selectMark: `<svg width="800px" height="800px" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#000000" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8 316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/>
+            <path fill="currentColor" d="M104.704 338.752a64 64 0 0 1 90.496 0l316.8 316.8 316.8-316.8a64 64 0 0 1 90.496 90.496L557.248 791.296a64 64 0 0 1-90.496 0L104.704 429.248a64 64 0 0 1 0-90.496z"/>
         </svg>`,
-        search: `<svg fill="#000000" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 485.104 485.104" xml:space="preserve">
+        search: `<svg fill="currentColor" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 485.104 485.104" xml:space="preserve">
             <g>
                 <path d="M110.028,115.171c-4.76-4.767-12.483-4.752-17.227,0c-32.314,32.33-32.314,84.898-0.016,117.197
                     c2.38,2.379,5.487,3.569,8.614,3.569c3.123,0,6.234-1.19,8.613-3.569c4.76-4.76,4.76-12.469,0-17.228
@@ -28,6 +28,18 @@ const inputConfig = {
                     c48.715,48.756,48.699,128.094-0.015,176.85c-23.62,23.612-55.014,36.612-88.406,36.612
                     C140.341,298.818,108.919,285.811,85.28,262.191z"/>
             </g>
+        </svg>`,
+        eyeOpen: `<svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+            <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>`,
+        eyeClosed: `<svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+            <path d="M20 9C20 9 19.6797 9.66735 19 10.5144M12 14C10.392 14 9.04786 13.5878 7.94861 13M12 14C13.608 14 14.9521 13.5878 16.0514 13M12 14V17.5M4 9C4 9 4.35367 9.73682 5.10628 10.6448M7.94861 13L5 16M7.94861 13C6.6892 12.3266 5.75124 11.4228 5.10628 10.6448M16.0514 13L18.5 16M16.0514 13C17.3818 12.2887 18.3535 11.3202 19 10.5144M5.10628 10.6448L2 12M19 10.5144L22 12"/>
+        </svg>`,
+        more: `<svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1" stroke-linecap="square" stroke-linejoin="miter" fill="none">
+            <circle cx="12" cy="12" r="1"/>
+            <circle cx="6" cy="12" r="1"/>
+            <circle cx="18" cy="12" r="1"/>
         </svg>`,
     },
 };
@@ -363,7 +375,7 @@ customElements.define("date-input", class extends HTMLElement {
 
                 button {
                     border: none;
-                    background: none;
+                    background: var(--input--button-icon-background-color, none);
                     color: var(--input--button-color, #333);
                     cursor: pointer;
                     outline: none;
@@ -1236,7 +1248,7 @@ customElements.define("select-native", class extends HTMLElement {
             </style>
             <select id="selectInput" part="select"><slot></slot></select>
             <div class="l-icon" part="icon">
-                ${selectMark}
+                ${inputConfig.svg.selectMark}
             </div>
             <div class="l-wrapper" part="wrapper">
                 <div id="label" class="l-label" part="label"></div>
@@ -2094,5 +2106,296 @@ customElements.define("select-multi", class extends HTMLElement {
 
     _handleInputFocusEvent(evt) {
         this._focusedElement = evt.target;
+    }
+});
+
+customElements.define("password-input", class extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-flex;
+                    border: var(--input--border, 1px solid #ccc);
+                    overflow: hidden;
+                    width: 15em;
+                    min-height: 1.5em;
+                    font-size: 1em;
+                    background: white;
+                }
+                :host(:focus-within) {
+                    border-color: var(--input--border-color-focused, black);
+                }
+
+                button {
+                    border: none;
+                    background: var(--input--button-icon-background-color, none);
+                    color: var(--input--button-color, #333);
+                    cursor: pointer;
+                    outline: none;
+                    width: 1.75em;
+                    text-align: center;
+                    user-select: none;
+                    font-size: 1em;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    font-family: inherit;
+                    height: 1.3em;
+                    border-radius: 0.25em;
+                    transition: 0.2s background-color, 0.2s color;
+                }
+
+                button:hover {
+                    background-color: var(--input--button-background-color-hovered, #ddd);
+                    color: var(--input--button-color-hovered, black);
+                    transition: 0.2s background-color, 0.2s color;
+                }
+
+                input {
+                    width: 100%;
+                    padding: 0 0.5em;
+                    border: none;
+                    outline: none;
+                    font-size: 1em;
+                    background: none;
+                    font-family: inherit;
+                    text-align: inherit;
+                    height: 1.3em;
+                }
+                input + button div svg {
+                    display: none;
+                    width: 100%;
+                    height: auto;
+                    transform: scale(1.75);
+                }
+                input[type=password] + button div svg:first-child {
+                    display: block;
+                }
+                input[type=text] + button div svg:last-child {
+                    display: block;
+                }
+
+                input:disabled + button,
+                input:read-only + button {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+            </style>
+            <input type="password" id="passwordInput" value="" part="input" autocomplete="off">
+            <button id="action" tabindex="-1" part="button">
+                <div>
+                    ${inputConfig.svg.eyeOpen}
+                    ${inputConfig.svg.eyeClosed}
+                </div>
+            </button>
+        `;
+
+        this.actionButton = this.shadowRoot.getElementById("action");
+        this.passwordInput = this.shadowRoot.getElementById("passwordInput");
+
+        this.actionButton.addEventListener("click", this._actionClick.bind(this));
+        this.passwordInput.addEventListener("change", this._changeEvent.bind(this));
+
+        this.addEventListener("click", () => this.passwordInput.focus());
+    }
+
+    static get observedAttributes() {
+        return ["value", "readonly", "disabled"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        switch (name) {
+            case "value":
+                this[name] = newValue;
+                break;
+            case "readonly":
+                this.readOnly = newValue !== "false" && newValue !== null;
+                break;
+            case "disabled":
+                this.disabled = newValue !== "false" && newValue !== null;
+                break;
+        }
+    }
+
+    focus() {
+        this.passwordInput.focus();
+    }
+
+    get value() {
+        return this.passwordInput.value;
+    }
+
+    set value(newValue) {
+        this.passwordInput.value = newValue;
+    }
+
+    get readOnly() {
+        return this.passwordInput.readOnly;
+    }
+
+    set readOnly(newValue) {
+        this.passwordInput.readOnly = newValue;
+    }
+
+    get disabled() {
+        return this.passwordInput.disabled;
+    }
+
+    set disabled(newValue) {
+        this.passwordInput.disabled = newValue;
+    }
+
+    _actionClick() {
+        this.passwordInput.type = this.passwordInput.type === "password" ? "text" : "password";
+    }
+
+    _changeEvent() {
+        this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
+    }
+});
+
+customElements.define("action-input", class extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: "open" });
+        this.shadowRoot.innerHTML = `
+            <style>
+                :host {
+                    display: inline-flex;
+                    border: var(--input--border, 1px solid #ccc);
+                    overflow: hidden;
+                    width: 15em;
+                    min-height: 1.5em;
+                    font-size: 1em;
+                    background: white;
+                }
+                :host(:focus-within) {
+                    border-color: var(--input--border-color-focused, black);
+                }
+
+                button {
+                    border: none;
+                    background: var(--input--button-icon-background-color, none);
+                    color: var(--input--button-color, #333);
+                    cursor: pointer;
+                    outline: none;
+                    width: 1.75em;
+                    text-align: center;
+                    user-select: none;
+                    font-size: 1em;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                    font-family: inherit;
+                    height: 1.3em;
+                    border-radius: 0.25em;
+                    transition: 0.2s background-color, 0.2s color;
+                }
+
+                button:hover {
+                    background-color: var(--input--button-background-color-hovered, #ddd);
+                    color: var(--input--button-color-hovered, black);
+                    transition: 0.2s background-color, 0.2s color;
+                }
+
+                input {
+                    width: 100%;
+                    padding: 0 0.5em;
+                    border: none;
+                    outline: none;
+                    font-size: 1em;
+                    background: none;
+                    font-family: inherit;
+                    text-align: inherit;
+                    height: 1.3em;
+                }
+                input + button div svg {
+                    display: flex;
+                    width: 100%;
+                    height: auto;
+                    transform: scale(1.75);
+                }
+
+                input:disabled + button,
+                input:read-only + button {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+            </style>
+            <input id="textInput" value="" part="input" autocomplete="off">
+            <button id="action" tabindex="-1" part="button">
+                <div>
+                    ${inputConfig.svg.more}
+                </div>
+            </button>
+        `;
+
+        this.actionButton = this.shadowRoot.getElementById("action");
+        this.textInput = this.shadowRoot.getElementById("textInput");
+
+        this.actionButton.addEventListener("click", this._actionClick.bind(this));
+        this.textInput.addEventListener("change", this._changeEvent.bind(this));
+
+        this.addEventListener("click", () => this.textInput.focus());
+    }
+
+    static get observedAttributes() {
+        return ["value", "readonly", "disabled"];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+        switch (name) {
+            case "value":
+                this[name] = newValue;
+                break;
+            case "readonly":
+                this.readOnly = newValue !== "false" && newValue !== null;
+                break;
+            case "disabled":
+                this.disabled = newValue !== "false" && newValue !== null;
+                break;
+        }
+    }
+
+    focus() {
+        this.textInput.focus();
+    }
+
+    get value() {
+        return this.textInput.value;
+    }
+
+    set value(newValue) {
+        this.textInput.value = newValue;
+    }
+
+    get readOnly() {
+        return this.textInput.readOnly;
+    }
+
+    set readOnly(newValue) {
+        this.textInput.readOnly = newValue;
+    }
+
+    get disabled() {
+        return this.textInput.disabled;
+    }
+
+    set disabled(newValue) {
+        this.textInput.disabled = newValue;
+    }
+
+    _actionClick(evt) {
+        this.dispatchEvent(new CustomEvent("change", { bubbles: true, detail: { value: this.value, action: true, actionEvent: evt } }));
+    }
+
+    _changeEvent() {
+        this.dispatchEvent(new CustomEvent("change", { detail: { value: this.value } }));
     }
 });
