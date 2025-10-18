@@ -15,7 +15,7 @@ function buildTree(tree, data, root, options) {
     const walk = (parent, tree) => {
         let lastElement;
         for (let item of tree) {
-            if (typeof item === "function") item = value(lastElement, data, parent);
+            if (typeof item === "function") item = item(lastElement, data, parent);
             if (!item) continue;
             switch (typeof item) {
                 case "object":
